@@ -12,7 +12,13 @@
   "dependencies": {
     "axios": "^0.17.1",
     "element-ui": "^2.0.5",
+    "file-system": "^2.2.2",
+    "filter-files": "^0.4.0",
+    "fs": "0.0.1-security",
+    "fs-finder": "^1.8.1",
+    "fs-mock": "^1.2.1",
     "jquery": "^3.2.1",
+    "level": "^2.0.1",
     "toastr": "^2.1.2",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",

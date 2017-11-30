@@ -1,15 +1,8 @@
 <template>
   <div>
 
- <div v-if="User">
-  hello
- </div>
- <div v-else>
- no go
- </div>
 
-
-
+website
 
   </div>
 </template>
@@ -23,12 +16,10 @@
         } 
       },
       computed: {
-        User () {
-          return this.$store.getters.GetAuthStatus;
-        }
+
       },
       created () {
-        this.$store.dispatch('UserIsAuthenticated');
+        
       }, 
       components: {
           
