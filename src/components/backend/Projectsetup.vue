@@ -29,9 +29,8 @@
               <img v-bind:src="theme.image" class="image">
               <div style="padding: 14px;">
                 <span>{{theme.title}}</span> 
-                <div class="bottom clearfix">
-                  <time class="time"></time>
-                  <button type="text" class="mybutton button" @click="GetTheme" v-bind:id="theme.id">Select</button>
+                <div class="bottom clearfix"><br />
+                  <button type="text" class="mybutton02 button" @click="GetTheme" v-bind:id="theme.id">Select</button>
                 </div> 
               </div>
             </el-card>
@@ -63,6 +62,7 @@
 </template>
 
 <script>
+import $ from "jquery";
 
   export default {
      data() {
@@ -102,7 +102,12 @@
             }
           },
           GetTheme(e) {
+            e.preventDefault();
             this.selectedTheme = e.target.id;
+            $('.el-card').removeClass('selected01');
+            $('.mybutton02').removeClass('selected02');
+            $(e.target).parent().parent().parent().parent().addClass('selected01');
+            $(e.target).addClass('selected02');
             console.log(this.selectedTheme);
           },
           PutProject() {
@@ -113,11 +118,12 @@
               Theme: this.selectedTheme,
               Configured: true
             }
-            this.$store.dispatch('EditProject', obj);
-            let self = this;
-            setTimeout(function(){ 
-                self.$router.push('/admin');
-            }, 3000);            
+            this.$store.dispatch('EditProject', obj);           
+            this.$router.push('/admin');     
+            this.$message({
+              message: 'The setup was complete.',
+              type: 'success'
+            });     
           }
       },
       computed: {
@@ -183,9 +189,16 @@
     font-size: 14px;
     border-radius: 4px;
         border: none;
-    color: #409EFF;
+    color: #000;
     background: 0 0;
     padding-left: 0;
     padding-right: 0;
+  }
+  .selected01 {
+    box-shadow: 0 0px 0px 0 rgba(0,0,0,.1);
+    /*color:#67c23a;*/
+  }
+  .selected02 {
+    color: #409EFF;
   }
 </style>

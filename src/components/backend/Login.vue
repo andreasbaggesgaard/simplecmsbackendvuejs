@@ -6,7 +6,7 @@
     <span>Simplecms</span>
   </div>
 
-<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" style="text-align:left;">
+<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="" style="">
 
   <el-form-item label="Username" prop="username">
     <el-input v-model="ruleForm.username"></el-input>
@@ -59,22 +59,22 @@
           if (valid) {
             let self = this;
             this.$store.dispatch('Login', { u: this.ruleForm.username, p: this.ruleForm.password });
-            setTimeout(function(){ 
-               let obj = self.$store.getters.GetApiResponse;
+            let obj = this.$store.getters.GetApiResponse;
+            setTimeout(function(){              
                console.log("apierror " + obj.e);
                console.log("apisuccess " + obj.s);
-               if(obj.e === "400" && obj.s === "0") {
+               if(obj.e === 400) {
                   self.$notify.error({
                       title: "Error",
                       message: 'Username and password do not match.'
                   });
-               } else if(obj.s === "200" && obj.e === "0") {
+               } else if(obj.s === 200) {
                  self.$message({
                     message: 'Welcome to your CMS dashboard.',
                     type: 'success'
                   });
                }
-            }, 1200);
+            }, 1000);
            
           } else { return false; }
         });
@@ -82,6 +82,10 @@
       resetForm(formName) {
         this.$refs[formName].resetFields();
       }
+    },
+    beforeCreate () {
+        this.$store.commit('GetUserID');
+        this.$store.commit('GetProject');
     },
     created () {
       
