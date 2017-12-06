@@ -48,10 +48,12 @@ export default {
   }
   .selected01 {
     box-shadow: 0 0px 0px 0 rgba(0,0,0,.1);
+    /*border: 1px solid #409EFF;*/
     /*color:#67c23a;*/
   }
   .selected02 {
     color: #409EFF !important;
+    border: 1px solid #409EFF !important;
   }
 
 .mybutton02 {
@@ -79,5 +81,11 @@ export default {
     background: #fff;
     border-color: #409EFF;
     color: #409EFF;
+}
+.el-alert__title, .el-alert__description {
+  font-size: 0.9rem !important;
+}
+.el-aside {
+  height: 100%;
 }
 </style>

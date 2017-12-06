@@ -5,21 +5,38 @@
 
       <sidenav></sidenav>
     
-    <el-container >
+    <el-container id="editor-page">
       <el-header style="text-align: right; font-size: 12px; height:0px;"></el-header>
 
+      <div v-loading="loading">
           <el-row :gutter="0" style="padding-top:5%" type="flex" justify="center">
             <el-col :xs="24" :span="12">
-            <el-button type="primary" plain @click="back">Cancel</el-button><br /><br />
-              <h3>Page editor</h3>
+            <el-button type="primary" plain @click="back">Cancel</el-button><br />
+              <h2 class="e-title">Page editor</h2>
             </el-col>
           </el-row>
 
-    <el-row v-loading="loading">
+          <el-row type="flex" justify="center">
+            <el-col :md="14">
+              <el-alert
+                title=""
+                type="info"
+                description="Here you have two options. Edit what you have already filled out, and assign items to the this page."
+                show-icon style="margin-bottom:4%;" :closable="false">
+              </el-alert>
+            </el-col>
+          </el-row>
+
+          <el-row>
+            <el-col :md="24">
+              <h3 class="hr hr--1">Step 1 - Edit page info</h3>
+            </el-col>
+          </el-row>
+
+    <el-row>
       <el-col :xs="24" :span="12">
 
         <el-row style="padding-left:5%;padding-right:5%;">
-          <el-alert title="The template is the layout of your page. New will be added regularly." type="info" show-icon :closable="false"></el-alert><br />
             <el-col :xs="24" :sm="12" :md="12"  v-for="(link, index) in JSON.parse(Templates)" :key="index" style="padding:5px">
               <el-card :body-style="{ padding: '10px' }" v-bind:class="{ selected01: link.id == templateID }">
                <img v-bind:src="link.previewImage" class="image">
@@ -40,7 +57,7 @@
               <div v-if="page.id == $route.params.id">
               <input type="hidden" v-bind:value="templateID = page.templateID" />
                   <el-form :xs="24" :span="8" ref="pageForm">
-                    <el-form-item label="Name">
+                    <el-form-item label="* Name">
                         <el-input v-model="page.name"></el-input>
                       </el-form-item>
 
@@ -64,7 +81,91 @@
            </div>
       </el-col>
     </el-row>
-        
+
+          <el-row>
+            <el-col :md="24">
+              <h3 class="hr">Step 2 - Assign items to this page</h3>
+              <p class="hr--1">sads</p>
+            </el-col>
+          </el-row>
+
+            <el-row>
+              <el-col :xs="24" :span="12">
+
+                <el-button type="primary" plain @click="OpenDialog">Create new item +</el-button>
+
+                <el-dialog
+                  title=""
+                  :visible.sync="Dialog"
+                  width="70%"
+                  :before-close="handleClose">
+                  <createitem></createitem>
+                  <span slot="footer" class="dialog-footer">
+                    <el-button @click="Dialog = false">Close</el-button>
+                   
+                  </span>
+                </el-dialog>
+
+              </el-col>
+
+               <el-col :xs="24" :span="12">
+
+
+          <!--<el-table
+            :data="JSON.parse(exampleList)"
+            style="width: 100%"
+            v-loading="loading">
+            <el-table-column type="expand">
+              <template slot-scope="props">
+                <p v-if="props.row.title">Title: {{ props.row.title }}</p>
+                <p v-if="props.row.text">Text: {{ props.row.text }}</p>
+                <p v-if="props.row.image">Image: {{ props.row.image }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="name"
+              label="Title">
+            </el-table-column>
+            </el-table-column>
+            <el-table-column
+              label="">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+              </template>
+            </el-table-column>
+          </el-table>-->
+          
+                <div id="drag-container" v-loading="loadingItems">
+                  <draggable v-model="itemOrder">
+
+                    <div v-for="(text, index) in itemOrder" :key="index" class="drag-box" v-bind:id="text.sortNumber = index + 1">
+                        <div class="drag-img">
+                          <img src="../../../assets/arrow.png" width="15" height="auto" id="drag-icon" />                      
+                        </div>
+                        <div class="drag-text">
+                        <el-tag type="info">{{index + 1}}</el-tag>
+                          <h3>{{text.name}}</h3> 
+                        </div>
+                        <div class="drag-action">
+                            asda
+                        </div>
+                      </div>
+
+                  </draggable>
+                </div>
+
+              </el-col>
+
+          </el-row>
+
+
+  </div>
 
     </el-container>
   </el-container>
@@ -75,24 +176,51 @@
 <script>
 import $ from "jquery";
 import sidenav from "@/components/backend/Sidenav"
+import draggable from 'vuedraggable'
+import createitem from "@/components/backend/items/CreateItem"
+import compareArrays from 'lodash/isequal';
+import forEach from 'lodash/foreach';
+
 
   export default {
     data() {
       return {
         id: "",
         loading: false,
+        loadingItems: false,
         templateID: "",
         selectedID: "",
+        dialogVisible: false,
+        itemOrder: [],
+        newItemOrder: []
       }
     },
     beforeCreate () {
+      this.$store.commit('GetUserID');
       this.$store.commit('GetPages'); 
-      this.$store.commit('GetTemplates');       
+      this.$store.commit('GetTemplates');   
+      this.$store.commit('GetItems');    
     },
-    created () {           
-      
+    created () {    
+      let self = this;
+      setTimeout(function(){ 
+        self.itemOrder = self.$store.getters.GetISorted;
+        self.newItemOrder = self.$store.getters.GetISorted;
+        console.log("itemorder" ,self.itemOrder);
+       }, 500);             
     },
     methods: { 
+      OpenDialog () {
+        this.dialogVisible = true;
+        this.$store.commit('SetDialog', true);
+      },
+      handleClose(done) {
+        this.$confirm('Are you sure to close this dialog?')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
       back () {
         this.$router.push("/pages");
       },
@@ -121,6 +249,23 @@ import sidenav from "@/components/backend/Sidenav"
       },
        submitForm(formName, page) {          
         if (page.name != "") {
+
+          if(!compareArrays(this.newItemOrder, this.itemOrder)) {
+            let self = this;
+            forEach(this.newItemOrder, function(value, key){
+              let itm = {
+                  ID: value.id,
+                  Name: value.name,
+                  Title: value.title,
+                  Text: value.text,
+                  Image: value.image,
+                  SortNumber: value.sortNumber,
+                  PageID: value.pageID
+                }
+                self.$store.dispatch('EditItem', itm);  
+                console.log(value)
+            });
+          }
           
           let obj = {
             ID: page.id,
@@ -149,14 +294,99 @@ import sidenav from "@/components/backend/Sidenav"
         },
         Templates () {
           return JSON.stringify(this.$store.getters.GetAllTemplates);
+        },
+        itemsList: {
+          get() {
+            //return this.$store.getters.GetISorted;
+          },
+          set(val) {
+            //this.$store.commit('SetItems', val);
+            //this.newItemOrder = val;
+            //console.log(this.newItemOrder)
+          }
+        },
+        Dialog: {
+          get() {
+            return this.$store.getters.GetDialogVal;
+          },
+          set(val) {
+            this.$store.commit('SetDialog', val)
+          }
+          
         }
+        
     },
     components: {
-      sidenav
+      sidenav,
+      draggable,
+      createitem
     } 
   };
 </script>
 
 <style>
-
+.hr {
+  border-top: 1px solid lightgrey;
+  padding-top:2%;
+  margin-left:1%;
+  margin-right:1%;
+  font-weight:500;
+}
+.hr--1 {
+  padding-bottom:2%;
+}
+.e-title {
+  padding-top: 1%;
+  padding-bottom: 1%;
+}
+#editor-page {
+  /*min-height:1500px;*/
+}
+.el-dialog {
+  margin-top: 5vh !important;
+}
+.drag-box {
+  border: 1px solid lightgrey;
+  margin-bottom: 1%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 485px;
+  max-height: 60px;
+}
+.drag-box h3 {
+  font-weight: 300;
+}
+.drag-img {
+  flex: 1;
+}
+.drag-text {
+  flex: 4;
+  font-size: 0.8rem;
+}
+.drag-action {
+  flex: 1;
+}
+.drag-box:hover {
+  cursor: pointer;
+}
+.drag-box:active {
+  border: 1px solid black;
+  font-weight: bolder !important;
+  background: #FBFBFB;
+}
+#drag-icon {
+  opacity: 0.6;
+}
+#drag-container {
+  margin-bottom: 15%;
+}
+.drag-text .el-tag {
+  float: left;
+  margin-top: 3%;
+}
+.el-tag:active {
+  background: red !important;
+}
 </style>

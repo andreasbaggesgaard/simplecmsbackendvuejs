@@ -1,19 +1,7 @@
 <template>
   <div>
-
-    <el-container style="height: 100%; border: 1px solid #eee;">
-
-    <sidenav></sidenav>
-  
-  <el-container>
-    <el-header style="text-align: right; font-size: 12px; height:0px;"></el-header>
-
-    <el-row :gutter="0" style="padding-top:5%">
-
-  <div v-if="newItem">
-    <el-button type="primary" plain @click="cancel">Cancel</el-button><br /><br />
     <h3>Create a new item</h3>
-    <p>Select one of the options</p><br />
+    <p>Select one of the content types</p>
 
     <el-row>
       <el-col :xs="24" :span="12">
@@ -21,11 +9,11 @@
         <el-row style="padding-left:5%;padding-right:5%;">
 
             <el-col :xs="24" :sm="12" :md="12"  v-for="(link, index) in JSON.parse(ContentTypes)" :key="index" style="padding:5px">
-              <el-card :body-style="{ padding: '10px' }">
+              <el-card class="cardb" :body-style="{ padding: '10px' }">
                 <div style="padding: 0px;">
                   <h3 style="font-weight:lighter">{{link.name}}</h3> 
                   <div class="bottom clearfix">
-                    <button type="text" class="mybutton02 button" @click="GetCT" v-bind:id="link.name">Select</button>
+                    <button type="text" class="mybutton02 button createb" @click="GetCT" v-bind:id="link.name">Select</button>
                   </div>  
                 </div>
               </el-card>
@@ -65,58 +53,7 @@
 
       </el-col>
     </el-row>
-
-
-
-
-
-  </div>
-  <div else v-bind:class="{ active: newItem }">
-      <el-col :xs="24" :span="8" class="items-col">
-        <el-button type="primary" plain @click="create">Create new page +</el-button>
-      </el-col>
-
-      <el-col :xs="24" :span="16" class="items-col">
-
-          <el-table
-            :data="JSON.parse(Pages)"
-            style="width: 100%"
-            :row-class-name="tableRowClassName"
-            v-loading="loading">
-            <el-table-column type="expand">
-              <template slot-scope="props">
-                <p v-if="props.row.title">Title: {{ props.row.title }}</p>
-                <p v-if="props.row.text">Text: {{ props.row.text }}</p>
-                <p v-if="props.row.image">Image: {{ props.row.image }}</p>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="name"
-              label="Name">
-            </el-table-column>
-            </el-table-column>
-            <el-table-column
-              label="">
-              <template slot-scope="scope">
-                <el-button
-                  size="mini"
-                  @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-                <el-button
-                  size="mini"
-                  type="danger"
-                  @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-
-      </el-col>
-
-      </div>
-    </el-row>
-
-  </el-container>
-</el-container>
-
+  
   </div>
 </template>
 
@@ -146,15 +83,13 @@ import sidenav from "@/components/backend/Sidenav"
     },
     beforeCreate () {
       this.$store.commit('GetUserID');
-      this.$store.commit('GetPages');         
+      this.$store.commit('GetItems'); 
+      this.$store.commit('GetContentTypes');          
     },
     created () {
         this.loading = false;    
     },
     computed: {
-      Pages () {
-        return JSON.stringify(this.$store.getters.GetAllPages);      
-      },
       ContentTypes () {
         return JSON.stringify(this.$store.getters.GetAllContentTypes);
       }
@@ -178,8 +113,8 @@ import sidenav from "@/components/backend/Sidenav"
       GetCT (e) {
         this.selected = true;
         this.selectedID = e.target.id;
-        $('.el-card').removeClass('selected01');
-        $('.mybutton02').removeClass('selected02');
+        $('.cardb').removeClass('selected01');
+        $('.createb').removeClass('selected02');
         $(e.target).parent().parent().parent().parent().addClass('selected01');
         $(e.target).addClass('selected02');
         console.log(this.selectedID);
@@ -188,10 +123,10 @@ import sidenav from "@/components/backend/Sidenav"
         this.loading = true;
         let self = this; 
         setTimeout(function(){ 
-          self.$store.commit('GetPages');   
-          self.$store.getters.GetAllPages;
+          self.$store.commit('GetItems');   
+          self.$store.getters.GetAllItems;
           self.loading = false;
-        }, 500); 
+        }, 1000); 
       },
       submitForm(formName) {          
           this.$refs[formName].validate((valid) => {       
@@ -201,15 +136,19 @@ import sidenav from "@/components/backend/Sidenav"
               Title: this.itemsForm.title,
               Text: this.itemsForm.text,
               Image: this.itemsForm.image,
+              PageID: this.$route.params.id
             }
-            this.$store.dispatch('NewItem', obj);    
+            this.$store.dispatch('NewItem', obj);  
+            this.$store.commit('SetDialog', false);  
             let self = this; 
-            this.FetchItems();            
+            this.FetchItems();        
             this.$notify({
               title: 'Success',
               message: 'Item created',
               type: 'success'
             });
+            $('.cardb').removeClass('selected01');
+            $('.createb').removeClass('selected02');
             this.newItem = false;
             this.selected = false;
             this.selectedID = "";
@@ -247,9 +186,6 @@ import sidenav from "@/components/backend/Sidenav"
       
       }
     },
-    components: {
-      sidenav
-    } 
   };
 </script>
 

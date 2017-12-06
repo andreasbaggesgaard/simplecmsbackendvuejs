@@ -6,10 +6,12 @@ import 'element-ui/lib/theme-chalk/index.css'
 import App from './App'
 import router from './router'
 import locale from 'element-ui/lib/locale/lang/en'
+import draggable from 'vuedraggable'
 
 import { store } from './store'
 
 Vue.use(ElementUI, {locale})
+Vue.use(draggable)
 
 Vue.config.productionTip = false
 

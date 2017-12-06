@@ -19,5 +19,8 @@ export default new Router({
     { path: '/items/:id', name: 'item', component: Itemdetail },
     { path: '/pages', name: 'pages', component: Pages },
     { path: '/pages/:id', name: 'page', component: Pagedetail },
-  ]
+  ],
+  scrollBehavior (to, from, savedPosition) {
+    return { x: 0, y: 0 }
+  }
 })

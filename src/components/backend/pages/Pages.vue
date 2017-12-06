@@ -1,16 +1,24 @@
 <template>
   <div>
 
-    <el-container style="height: 100%; border: 1px solid #eee;">
+  <el-container style="height: 100%; border: 1px solid #eee;">
 
     <sidenav></sidenav>
   
   <el-container>
     <el-header style="text-align: right; font-size: 12px; height:0px;"></el-header>
 
-    <el-row :gutter="0" style="padding-top:5%">
+    
+   <el-row>
+       <el-button size="small" style="float:right; margin:2%;">Need help <i class="el-icon-question"></i></el-button>
+      <el-col :md="24">
+          <el-tabs type="card" v-bind:value="tabsValue" @tab-click="handleClick" style="padding-left:2%;padding-right:1%;">
+            <el-tab-pane name="Pages" label="Pages"><span slot="label"><i class="el-icon-date"></i> Pages </span>
 
+
+<el-row :gutter="0" style="padding-top:3%">
   <div v-if="newPage">
+  
     <el-button type="primary" plain @click="cancel">Cancel</el-button><br /><br />
     <h3>Create a new page</h3>
     <p>Title, text and image will be shown at the top of your page. You can also skip them, and just use <b>items.</b></p><br/>
@@ -18,7 +26,7 @@
     <el-row>
       <el-col :xs="24" :span="12">
 
-        <el-row style="padding-left:5%;padding-right:5%;">
+        <el-row>
           <el-alert title="The template is the layout of your page. New will be added regularly." type="info" show-icon :closable="false"></el-alert><br />
             <el-col :xs="24" :sm="12" :md="12"  v-for="(link, index) in JSON.parse(Templates)" :key="index" style="padding:5px">
               <el-card :body-style="{ padding: '10px' }">
@@ -67,23 +75,23 @@
 
   <div else v-bind:class="{ active: newPage }">
   
-   <el-row type="flex" justify="center">
-    <el-col :md="12">
-      <el-alert
-        title="Info"
-        type="info"
-        description="When you have created a page, you can edit it and assign items to it. They are the elements on the page, and will be listed accordingly to the selected template."
-        show-icon style="margin-bottom:6%;margin-top:-3%;" :closable="false">
-      </el-alert>
-    </el-col>
-  </el-row>
 
-      <el-col :xs="24" :span="8" class="items-col">
-      
+      <el-col :xs="24" :span="7" class="items-col" style="margin-top:"> 
         <el-button type="primary" plain @click="create">Create new page +</el-button>
       </el-col>
 
-      <el-col :xs="24" :span="16" class="items-col">
+      <el-col :xs="24" :span="17" class="items-col">
+
+         <el-row type="flex" justify="center">
+            <el-col :md="24">
+              <el-alert
+                title="Pages info"
+                type="info"
+                description="When you have created a page, you can edit it and assign items to it. They are the elements on the page, and will be listed accordingly to the selected template."
+                show-icon style="margin-bottom:4%;" :closable="false">
+              </el-alert>
+            </el-col>
+          </el-row>
 
           <el-table
             :data="JSON.parse(Pages)"
@@ -125,6 +133,19 @@
 
       </div>
     </el-row>
+                    
+    </el-tab-pane>
+
+    <!-- Items -->
+    <el-tab-pane name="Items" label="Items"><span slot="label"><i class="el-icon-date"></i> Items </span>
+              
+              <items></items>
+                         
+        </el-tab-pane>
+      </el-tabs>
+  </el-col>
+</el-row>
+
 
   </el-container>
 </el-container>
@@ -135,10 +156,12 @@
 <script>
 import $ from "jquery";
 import sidenav from "@/components/backend/Sidenav"
+import items from "@/components/backend/items/Items"
 
   export default {
     data() {
       return {
+        tabsValue: "Pages",
         loading: true,
         newPage: false,
         selected: false,
@@ -180,6 +203,10 @@ import sidenav from "@/components/backend/Sidenav"
           return 'success-row';
         }
         return '';
+      },
+      handleClick(tab, event) {
+        console.log(tab, event);
+        this.tabsValue = tab.name;
       },
       create () {
         this.newPage = true;
@@ -262,7 +289,8 @@ import sidenav from "@/components/backend/Sidenav"
       }
     },
     components: {
-      sidenav
+      sidenav,
+      items
     } 
   };
 </script>

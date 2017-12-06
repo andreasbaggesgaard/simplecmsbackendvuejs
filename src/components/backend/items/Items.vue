@@ -1,24 +1,15 @@
 <template>
   <div>
 
-    <el-container style="height: 100%; border: 1px solid #eee;">
-
-    <sidenav></sidenav>
-  
-  <el-container>
-    <el-header style="text-align: right; font-size: 12px; height:0px;"></el-header>
-
-    <el-row :gutter="0" style="padding-top:5%">
-
-  <div v-if="newItem">
+  <div v-if="newItem" style="padding-top:2%">
     <el-button type="primary" plain @click="cancel">Cancel</el-button><br /><br />
     <h3>Create a new item</h3>
-    <p>Select one of the options</p><br />
+    <p>Select one of the following content types</p><br />
 
     <el-row>
       <el-col :xs="24" :span="12">
 
-        <el-row style="padding-left:5%;padding-right:5%;">
+        <el-row>
 
             <el-col :xs="24" :sm="12" :md="12"  v-for="(link, index) in JSON.parse(ContentTypes)" :key="index" style="padding:5px">
               <el-card :body-style="{ padding: '10px' }">
@@ -67,16 +58,25 @@
     </el-row>
 
 
-
-
-
   </div>
   <div else v-bind:class="{ active: newItem }">
-      <el-col :xs="24" :span="8" class="items-col">
+  
+      <el-col :xs="24" :span="7" class="items-col" style="margin-top:3%">
         <el-button type="primary" plain @click="create">Create new item +</el-button>
       </el-col>
 
-      <el-col :xs="24" :span="16" class="items-col">
+      <el-col :xs="24" :span="17" class="items-col">
+
+          <el-row type="flex" justify="center">
+            <el-col :md="24">
+              <el-alert
+                title="Items info"
+                type="info"
+                description="This is the full overview of all your items. You can also do everything from inside the 'Pages' section, which is where you actually use the items. "
+                show-icon style="margin-bottom:4%;margin-top:4%;" :closable="false">
+              </el-alert>
+            </el-col>
+          </el-row>
 
           <el-table
             :data="JSON.parse(Items)"
@@ -122,8 +122,6 @@
       </div>
     </el-row>
 
-  </el-container>
-</el-container>
 
   </div>
 </template>

@@ -3,6 +3,7 @@ import Vuex from "vuex"
 import axios from "axios"
 import router from "@/router/index"
 //import { config } from "../test"
+import orderBy from "lodash/orderBy"
 
 //TODO: setup with modules
 
@@ -33,6 +34,7 @@ const apiGetTemplates = api + "template/";
 
 export const store = new Vuex.Store({
     state: {
+        Dialog: false,
         Project: [],
         UserAuth: "",
         UserID: "",
@@ -46,6 +48,7 @@ export const store = new Vuex.Store({
         Templates: []
     },
     getters: {
+        GetDialogVal: state => state.Dialog,
         GetProjectObject: state => state.Project,
         GetAuthStatus: state => state.UserAuth,
         GetConfigStatus: state => state.Configured,
@@ -58,8 +61,15 @@ export const store = new Vuex.Store({
             let obj = {s: state.ApiSuccess, e: state.ApiError}
             return obj;
         },
+        GetISorted(state) {
+            let items = orderBy(state.Items, ['sortNumber'], ['asc']);
+            return items;
+        },
     },
-    mutations: {    
+    mutations: {   
+        SetDialog (state, payload) {
+            state.Dialog = payload;
+        }, 
         SetAuthStatus (state, payload) {
             state.UserAuth = payload;
         },
@@ -80,6 +90,9 @@ export const store = new Vuex.Store({
         },
         SetSelectedItemID (state, payload) {
             state.SelectedItemID = payload;
+        },
+        SetItems(state, payload) {
+            state.Items = payload;
         },
         GetUserID (state) {
             var rawFile = new XMLHttpRequest();
@@ -183,9 +196,8 @@ export const store = new Vuex.Store({
               Title: item.Title,
               Text: item.Text,
               Image: item.Image,
-              SortNumber: null,
-              Used: false, 
-              PageID: null, 
+              SortNumber: 100,
+              PageID: item.PageID, 
               ProjectID: context.state.UserID
             }
             console.log(obj);
@@ -197,6 +209,21 @@ export const store = new Vuex.Store({
         DeleteItem (context, id) {
             axios.delete(apiDeleteItem + id)
             .then(function (response) { console.log(response); })
+            .catch(function (error) { console.log(error); }); 
+        },
+        EditItem (context, item) {
+            let obj = {
+              ID: item.ID,
+              Name: item.Name,
+              Title: item.Title,
+              Text: item.Text,
+              Image: item.Image,
+              SortNumber: item.SortNumber
+            }
+            axios.put(apiGetItems + obj.ID, obj)
+            .then(function (response) {
+                console.log(response);
+            })
             .catch(function (error) { console.log(error); }); 
         },
         NewPage (context, page) {
