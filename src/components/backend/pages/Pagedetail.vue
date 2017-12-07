@@ -82,17 +82,14 @@
       </el-col>
     </el-row>
 
+        <div id="items-container">
           <el-row>
             <el-col :md="24">
               <h3 class="hr">Step 2 - Assign items to this page</h3>
-              <p class="hr--1">sads</p>
-            </el-col>
-          </el-row>
+              <p id="how-to">When you have created an item, then you can drag them up and down in the list to the right. The preview of the page will be listed accordingly to the template you have selected.</p>
 
-            <el-row>
-              <el-col :xs="24" :span="12">
 
-                <el-button type="primary" plain @click="OpenDialog">Create new item +</el-button>
+                <el-button type="primary" class="hr--2" plain @click="OpenDialog">Create new item +</el-button>
 
                 <el-dialog
                   title=""
@@ -101,10 +98,28 @@
                   :before-close="handleClose">
                   <createitem></createitem>
                   <span slot="footer" class="dialog-footer">
-                    <el-button @click="Dialog = false">Close</el-button>
-                   
+                    <el-button @click="Dialog = false">Close</el-button>           
                   </span>
                 </el-dialog>
+
+            </el-col>
+          </el-row>
+
+            <el-row v-loading.fullscreen.lock="loadingItems">
+              <el-col :xs="24" :span="12" id="pp-con">
+
+              <el-card id="page-preview">
+                <el-row v-if="selectedID == 1 || templateID == 1 &&  selectedID != 2">
+                    <el-col v-model="itemOrder" :md="12" v-for="(item, index) in itemOrder" :key="index">
+                        {{item.name}}
+                    </el-col>
+                </el-row> 
+                <el-row v-else-if="selectedID == 2 || templateID == 2 && selectedID != 1">
+                    <el-col v-model="itemOrder" :md="6" v-for="(item, index) in itemOrder" :key="index">
+                        {{item.name}}
+                    </el-col>
+                </el-row> 
+              </el-card>
 
               </el-col>
 
@@ -141,7 +156,7 @@
             </el-table-column>
           </el-table>-->
           
-                <div id="drag-container" v-loading="loadingItems">
+                <div id="drag-container">
                   <draggable v-model="itemOrder">
 
                     <div v-for="(text, index) in itemOrder" :key="index" class="drag-box" v-bind:id="text.sortNumber = index + 1">
@@ -163,6 +178,7 @@
               </el-col>
 
           </el-row>
+        </div>
 
 
   </div>
@@ -199,15 +215,32 @@ import forEach from 'lodash/foreach';
       this.$store.commit('GetUserID');
       this.$store.commit('GetPages'); 
       this.$store.commit('GetTemplates');   
-      this.$store.commit('GetItems');    
+      this.$store.commit('GetPageItems', this.$route.params.id);   
     },
-    created () {    
+    created () {   
+      this.loadingItems = true; 
       let self = this;
       setTimeout(function(){ 
         self.itemOrder = self.$store.getters.GetISorted;
         self.newItemOrder = self.$store.getters.GetISorted;
-        console.log("itemorder" ,self.itemOrder);
-       }, 500);             
+        self.loadingItems = false;
+       }, 1500);             
+    },
+    watch: {
+        Dialog: function(val) {
+          if(val == false) { 
+            this.loadingItems = true;          
+            this.itemOrder = [];
+            let self = this;
+            setTimeout(function(){ 
+              self.$store.commit('GetPageItems', self.$route.params.id);
+            }, 1000);
+            setTimeout(function(){ 
+              self.itemOrder = self.$store.getters.GetISorted;
+              self.loadingItems = false; 
+            }, 2000); 
+          }
+        }
     },
     methods: { 
       OpenDialog () {
@@ -252,7 +285,7 @@ import forEach from 'lodash/foreach';
 
           if(!compareArrays(this.newItemOrder, this.itemOrder)) {
             let self = this;
-            forEach(this.newItemOrder, function(value, key){
+            forEach(this.itemOrder, function(value, key){
               let itm = {
                   ID: value.id,
                   Name: value.name,
@@ -260,13 +293,12 @@ import forEach from 'lodash/foreach';
                   Text: value.text,
                   Image: value.image,
                   SortNumber: value.sortNumber,
-                  PageID: value.pageID
+                  //PageID: value.pageID
                 }
                 self.$store.dispatch('EditItem', itm);  
-                console.log(value)
+                console.log("val? " , value)
             });
-          }
-          
+          }         
           let obj = {
             ID: page.id,
             Name: page.name,
@@ -335,12 +367,21 @@ import forEach from 'lodash/foreach';
 .hr--1 {
   padding-bottom:2%;
 }
+.hr--2 {
+  margin-bottom:4%;
+}
 .e-title {
   padding-top: 1%;
   padding-bottom: 1%;
 }
 #editor-page {
   /*min-height:1500px;*/
+}
+#how-to {
+  width: 60%;
+  margin: 0 auto;
+  max-width: 700px;
+  margin-bottom:2%;
 }
 .el-dialog {
   margin-top: 5vh !important;
@@ -388,5 +429,19 @@ import forEach from 'lodash/foreach';
 }
 .el-tag:active {
   background: red !important;
+}
+#items-container {
+  min-height: 650px;
+}
+#pp-con {
+    display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#page-preview {
+  min-width:80%;
+  max-width: 80%;
+  min-height:400px;
+  height: 100%;
 }
 </style>

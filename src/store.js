@@ -42,6 +42,7 @@ export const store = new Vuex.Store({
         ApiError: 0,
         Configured: "",
         Items: [],
+        PageItems: [],
         SelectedItemID: "",
         ContentTypes: [],
         Pages: [],
@@ -62,7 +63,7 @@ export const store = new Vuex.Store({
             return obj;
         },
         GetISorted(state) {
-            let items = orderBy(state.Items, ['sortNumber'], ['asc']);
+            let items = orderBy(state.PageItems, ['sortNumber'], ['asc']);
             return items;
         },
     },
@@ -129,6 +130,12 @@ export const store = new Vuex.Store({
             axios.get(apiGetItems + state.UserID)
             .then(function (response) {
                 state.Items = response.data;
+            }).catch(function (error) { console.log(error); });
+        },
+        GetPageItems (state, pageid) {
+            axios.get(apiGetItems + state.UserID + "/" + pageid)
+            .then(function (response) {
+                state.PageItems = response.data;
             }).catch(function (error) { console.log(error); });
         },
         GetContentTypes (state) {
@@ -218,7 +225,8 @@ export const store = new Vuex.Store({
               Title: item.Title,
               Text: item.Text,
               Image: item.Image,
-              SortNumber: item.SortNumber
+              SortNumber: item.SortNumber,
+              //PageID: item.pageID
             }
             axios.put(apiGetItems + obj.ID, obj)
             .then(function (response) {
