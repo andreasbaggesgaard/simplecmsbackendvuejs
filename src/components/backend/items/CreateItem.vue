@@ -2,7 +2,7 @@
   <div>
     <h3>Create a new item</h3>
     <p>Select one of the content types</p>
-
+    <input type="hidden" v-bind:value="pageid = pid" />
     <el-row>
       <el-col :xs="24" :span="12">
 
@@ -39,8 +39,12 @@
           </el-form-item>
 
           <el-form-item prop="image" label="Image" v-if="selectedID == 'Title, Text and Image' || selectedID == 'Title and Image' || selectedID == 'Text and Image' || selectedID == 'Image'">
-            <el-input v-model="itemsForm.image"></el-input>
+            <!--<el-input v-model="itemsForm.image"></el-input>-->
+            <br />
+            <uploadimage original="" bool="false"></uploadimage>
+            <input type="hidden" v-bind:value="itemsForm.image = ItemImage" />
           </el-form-item>
+          
           </div>
 
           <el-form-item>
@@ -50,7 +54,7 @@
             <el-button @click="resetForm('itemsForm')" v-else disabled>Reset</el-button>
           </el-form-item>
         </el-form>
-
+        <input type="hidden" v-bind:value="iNumber = ItemsNumber" />
       </el-col>
     </el-row>
   
@@ -59,15 +63,18 @@
 
 <script>
 import $ from "jquery";
-import sidenav from "@/components/backend/Sidenav"
+import uploadimage from '@/components/backend/Uploadimage';
 
   export default {
+    props:['pid'],
     data() {
       return {
+        pageid: "",
         loading: true,
         newItem: false,
         selected: false,
         selectedID: "",
+        iNumber: "",
         itemsForm: {
           name: "",
           title: "",
@@ -83,26 +90,25 @@ import sidenav from "@/components/backend/Sidenav"
     },
     beforeCreate () {
       this.$store.commit('GetUserID');
-      this.$store.commit('GetItems'); 
+      //this.$store.commit('GetItems'); 
       this.$store.commit('GetContentTypes');          
     },
     created () {
-        this.loading = false;    
+        this.loading = false;  
+        this.$store.commit('SetItemImage', "");  
     },
     computed: {
       ContentTypes () {
         return JSON.stringify(this.$store.getters.GetAllContentTypes);
+      },
+      ItemsNumber () {
+        return this.$store.getters.GetPageItemsIndex;
+      },
+      ItemImage () {
+          return this.$store.getters.GetItemImage;
       }
     },
     methods: { 
-      tableRowClassName({row, rowIndex}) { 
-        if (row.used == true) {
-          return 'warning-row';
-        } else if (rowIndex == 10) {
-          return 'success-row';
-        }
-        return '';
-      },
       create () {
         this.newItem = true;
       },
@@ -120,13 +126,27 @@ import sidenav from "@/components/backend/Sidenav"
         console.log(this.selectedID);
       },
       FetchItems() {
-        this.loading = true;
+        /*this.loading = true;
         let self = this; 
         setTimeout(function(){ 
           self.$store.commit('GetItems');   
           self.$store.getters.GetAllItems;
           self.loading = false;
-        }, 1000); 
+            self.$message({
+              type: 'success',
+              message: 'Item created'
+            });
+        }, 1000); */
+          /*this.loading = true;          
+          this.itemOrder = [];
+          let self = this;
+          setTimeout(function(){ 
+            self.$store.commit('GetPageItems', self.pageid);
+          }, 1000);
+          setTimeout(function(){ 
+            self.itemOrder = self.$store.getters.GetISorted;
+            self.loading = false; 
+          }, 2000); */
       },
       submitForm(formName) {          
           this.$refs[formName].validate((valid) => {       
@@ -136,56 +156,30 @@ import sidenav from "@/components/backend/Sidenav"
               Title: this.itemsForm.title,
               Text: this.itemsForm.text,
               Image: this.itemsForm.image,
-              PageID: this.$route.params.id
+              PageID: this.$route.params.id,
+              Index: this.iNumber
             }
             this.$store.dispatch('NewItem', obj);  
             this.$store.commit('SetDialog', false);  
             let self = this; 
-            this.FetchItems();        
-            this.$notify({
-              title: 'Success',
-              message: 'Item created',
-              type: 'success'
-            });
+            //this.FetchItems();        
             $('.cardb').removeClass('selected01');
             $('.createb').removeClass('selected02');
             this.newItem = false;
             this.selected = false;
             this.selectedID = "";
-            this.resetForm(formName);           
+            this.resetForm(formName);       
+            this.$store.commit('SetDialogClose', false);   
           } else { return false; }
         });
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();
-      },
-      handleEdit(index, row) {
-        console.log(index, row);
-        this.$router.push({ name: 'item', params: { id: row.id }});
-      },
-      handleDelete(index, row) {
-        console.log(index, row);
-
-        this.$confirm('This will permanently delete ' + row.name + '. Continue?', 'Warning', {
-          confirmButtonText: 'Delete',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-          this.$store.dispatch('DeleteItem', row.id);    
-          this.FetchItems();       
-          this.$message({
-            type: 'success',
-            message: 'Delete completed'
-          });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: 'Delete canceled'
-          });          
-        });
-      
       }
     },
+    components: {
+      uploadimage
+    }
   };
 </script>
 

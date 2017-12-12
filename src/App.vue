@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <!--<img src="./assets/logo.png">-->
+   
     <router-view/>
   </div>
 </template>
@@ -19,6 +20,12 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+a {
+  text-decoration: none !important;
+}
+.router-link-active li, .router-link-active li i {
+  color: rgb(255, 208, 75) !important;
 }
   .mybutton {
         display: inline-block;

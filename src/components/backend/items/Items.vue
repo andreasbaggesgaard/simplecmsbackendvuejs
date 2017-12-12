@@ -1,74 +1,10 @@
 <template>
   <div>
 
-  <div v-if="newItem" style="padding-top:2%">
-    <el-button type="primary" plain @click="cancel">Cancel</el-button><br /><br />
-    <h3>Create a new item</h3>
-    <p>Select one of the following content types</p><br />
-
-    <el-row>
-      <el-col :xs="24" :span="12">
-
-        <el-row>
-
-            <el-col :xs="24" :sm="12" :md="12"  v-for="(link, index) in JSON.parse(ContentTypes)" :key="index" style="padding:5px">
-              <el-card :body-style="{ padding: '10px' }">
-                <div style="padding: 0px;">
-                  <h3 style="font-weight:lighter">{{link.name}}</h3> 
-                  <div class="bottom clearfix">
-                    <button type="text" class="mybutton02 button" @click="GetCT" v-bind:id="link.name">Select</button>
-                  </div>  
-                </div>
-              </el-card>
-            </el-col>
-          </el-row>
-          
-      </el-col>
-      <el-col :xs="24" :span="12">
-
-        <el-form :model="itemsForm" :xs="24" :span="8" ref="itemsForm" :rules="rules" style="padding-left:5%;padding-right:5%;">
-          
-          <el-form-item prop="name" label="Name">
-            <el-input v-model="itemsForm.name" placeholder="Give your item a name that makes sense"></el-input>
-          </el-form-item>
-          
-          <div v-if="selected">
-          <el-form-item prop="title" label="Title" v-if="selectedID == 'Title' || selectedID == 'Title and Text' || selectedID == 'Title, Text and Image' || selectedID == 'Title and Image'">
-            <el-input v-model="itemsForm.title"></el-input>
-          </el-form-item>
-          
-          <el-form-item prop="text" label="Text" v-if="selectedID == 'Title and Text' || selectedID == 'Title, Text and Image' || selectedID == 'Text and Image' || selectedID == 'Text'">
-            <el-input type="textarea" v-model="itemsForm.text"></el-input>
-          </el-form-item>
-
-          <el-form-item prop="image" label="Image" v-if="selectedID == 'Title, Text and Image' || selectedID == 'Title and Image' || selectedID == 'Text and Image' || selectedID == 'Image'">
-            <el-input v-model="itemsForm.image"></el-input>
-          </el-form-item>
-          </div>
-
-          <el-form-item>
-            <el-button type="primary" @click="submitForm('itemsForm')" v-if="selected">Create</el-button>
-            <el-button type="primary" @click="submitForm('itemsForm')" v-else disabled>Create</el-button>
-            <el-button @click="resetForm('itemsForm')" v-if="selected">Reset</el-button>
-            <el-button @click="resetForm('itemsForm')" v-else disabled>Reset</el-button>
-          </el-form-item>
-        </el-form>
-
-      </el-col>
-    </el-row>
-
-
-  </div>
-  <div else v-bind:class="{ active: newItem }">
-  
-      <el-col :xs="24" :span="7" class="items-col" style="margin-top:3%">
-        <el-button type="primary" plain @click="create">Create new item +</el-button>
-      </el-col>
-
-      <el-col :xs="24" :span="17" class="items-col">
+      <el-col :xs="24" :span="24" class="items-col">
 
           <el-row type="flex" justify="center">
-            <el-col :md="24">
+            <el-col :md="20">
               <el-alert
                 title="Items info"
                 type="info"
@@ -87,7 +23,7 @@
               <template slot-scope="props">
                 <p v-if="props.row.title">Title: {{ props.row.title }}</p>
                 <p v-if="props.row.text">Text: {{ props.row.text }}</p>
-                <p v-if="props.row.image">Image: {{ props.row.image }}</p>
+                <img v-if="props.row.image" v-bind:src="props.row.image" alt="" width="100"/>
               </template>
             </el-table-column>
             <el-table-column
@@ -152,8 +88,7 @@ import sidenav from "@/components/backend/Sidenav"
     },
     beforeCreate () {
       this.$store.commit('GetUserID');
-      this.$store.commit('GetItems'); 
-      this.$store.commit('GetContentTypes');         
+      this.$store.commit('GetItems');      
     },
     created () {
       this.loading = false;
@@ -162,9 +97,6 @@ import sidenav from "@/components/backend/Sidenav"
       Items() {
         return JSON.stringify(this.$store.getters.GetAllItems);      
       },
-      ContentTypes() {
-        return JSON.stringify(this.$store.getters.GetAllContentTypes);
-      }
     },
     methods: { 
       tableRowClassName({row, rowIndex}) {
@@ -181,15 +113,6 @@ import sidenav from "@/components/backend/Sidenav"
       cancel () {
         this.newItem = false;
         this.selected = false;
-      },
-      GetCT (e) {
-        this.selected = true;
-        this.selectedID = e.target.id;
-        $('.el-card').removeClass('selected01');
-        $('.mybutton02').removeClass('selected02');
-        $(e.target).parent().parent().parent().parent().addClass('selected01');
-        $(e.target).addClass('selected02');
-        console.log(this.selectedID);
       },
       FetchItems() {
         this.loading = true;

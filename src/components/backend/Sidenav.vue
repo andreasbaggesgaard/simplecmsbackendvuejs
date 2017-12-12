@@ -2,31 +2,28 @@
   <div>
   
   <el-aside width="100%" style="min-height: auto%;min-width:200px;">
-    <el-menu default-active="1" style="height: 1200px; min-height: 100%" background-color="#545c64"
+    <el-menu  style="height: 1200px; min-height: 100%" background-color="#545c64"
       text-color="#fff"
       active-text-color="#ffd04b">
-       <el-menu-item index="1">
+       <router-link to="admin"><el-menu-item index="1">
         <template slot="title"><i class="el-icon-message"></i>Home</template>
-      </el-menu-item>
-      <el-menu-item index="2">
+      </el-menu-item></router-link>
+      <router-link to="pages"><el-menu-item index="2">
         <template slot="title"><i class="el-icon-message"></i>Pages</template>
-      </el-menu-item>
-      <el-menu-item index="3">
-        <template slot="title"><i class="el-icon-message"></i>Items</template>
-      </el-menu-item>
-      <el-menu-item index="4">
+      </el-menu-item></router-link>
+      <router-link to="menu"><el-menu-item index="3">
         <template slot="title"><i class="el-icon-message"></i>Menu</template>
-      </el-menu-item>
-      <el-menu-item index="5">
+      </el-menu-item></router-link>
+      <el-menu-item index="4">
         <template slot="title"><i class="el-icon-message"></i>Theme</template>
       </el-menu-item>
-      <el-menu-item index="6">
+      <el-menu-item index="5">
         <template slot="title"><i class="el-icon-message"></i>Configuration</template>
       </el-menu-item>
-      <el-menu-item index="7">
+      <el-menu-item index="6">
         <template slot="title"><i class="el-icon-message"></i>Profile</template>
       </el-menu-item>
-       <el-menu-item index="8" @click="Logout()">
+       <el-menu-item index="7" @click="Logout()">
         <template slot="title"><i class="el-icon-message"></i>Logout</template>
       </el-menu-item>
     </el-menu>

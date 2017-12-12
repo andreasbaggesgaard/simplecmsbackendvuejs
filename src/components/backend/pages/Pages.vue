@@ -102,7 +102,7 @@
               <template slot-scope="props">
                 <p v-if="props.row.title">Title: {{ props.row.title }}</p>
                 <p v-if="props.row.text">Text: {{ props.row.text }}</p>
-                <p v-if="props.row.image">Image: {{ props.row.image }}</p>
+                <img v-if="props.row.image" v-bind:src="props.row.image" alt="" width="100"/>
                 <p v-if="props.row.templateID">Template: {{ props.row.templateID }}</p>
               </template>
             </el-table-column>
@@ -162,7 +162,7 @@ import items from "@/components/backend/items/Items"
     data() {
       return {
         tabsValue: "Pages",
-        loading: true,
+        loading: false,
         newPage: false,
         selected: false,
         selectedID: "",
@@ -185,7 +185,10 @@ import items from "@/components/backend/items/Items"
       this.$store.commit('GetTemplates'); 
     },
     created () {
-        this.loading = false;    
+        /*let self = this; 
+        setTimeout(function(){ 
+          self.loading = false;
+        }, 2000);    */
     },
     computed: {
       Pages () {

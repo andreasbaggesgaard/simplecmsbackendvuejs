@@ -35,6 +35,9 @@ const apiGetTemplates = api + "template/";
 export const store = new Vuex.Store({
     state: {
         Dialog: false,
+        DialogEdit: false,
+        DialogClose: false,
+        DialogClose2: false,
         Project: [],
         UserAuth: "",
         UserID: "",
@@ -46,18 +49,28 @@ export const store = new Vuex.Store({
         SelectedItemID: "",
         ContentTypes: [],
         Pages: [],
-        Templates: []
+        Templates: [],
+        UploadedImage: "",
+        ImageCleared: false,
+        ItemImage: ""
     },
     getters: {
         GetDialogVal: state => state.Dialog,
+        GetDialogEditVal: state => state.DialogEdit,
+        GetDialogClose: state => state.DialogClose,
+        GetDialogClose2: state => state.DialogClose2,
         GetProjectObject: state => state.Project,
         GetAuthStatus: state => state.UserAuth,
         GetConfigStatus: state => state.Configured,
         GetAllItems: state => state.Items,
+        GetPageItemsIndex: state => state.PageItems.length,
         GetEditItem: state => state.Items.filter(item => item.id == state.SelectedItemID),
         GetAllContentTypes: state => state.ContentTypes,
         GetAllPages: state => state.Pages,
         GetAllTemplates: state => state.Templates,
+        GetUploadedImage: state => state.UploadedImage,
+        GetImageCleared: state => state.ImageCleared,
+        GetItemImage: state => state.ItemImage,
         GetApiResponse(state) {
             let obj = {s: state.ApiSuccess, e: state.ApiError}
             return obj;
@@ -70,6 +83,15 @@ export const store = new Vuex.Store({
     mutations: {   
         SetDialog (state, payload) {
             state.Dialog = payload;
+        }, 
+        SetEditDialog (state, payload) {
+            state.DialogEdit = payload;
+        }, 
+        SetDialogClose (state, payload) {
+            state.DialogClose = payload;
+        }, 
+        SetDialogClose2 (state, payload) {
+            state.DialogClose2 = payload;
         }, 
         SetAuthStatus (state, payload) {
             state.UserAuth = payload;
@@ -94,6 +116,21 @@ export const store = new Vuex.Store({
         },
         SetItems(state, payload) {
             state.Items = payload;
+        },
+        SetPages(state, payload) {
+            state.Pages = payload;
+        },
+        SetPageItems(state, payload) {
+            state.PageItems = payload;
+        },
+        SetUploadedImage(state, payload) {
+            state.UploadedImage = payload;
+        },
+        SetImageCleared(state, payload) {
+            state.ImageCleared = payload;
+        },
+        SetItemImage(state, payload) {
+            state.ItemImage = payload;
         },
         GetUserID (state) {
             var rawFile = new XMLHttpRequest();
@@ -203,7 +240,7 @@ export const store = new Vuex.Store({
               Title: item.Title,
               Text: item.Text,
               Image: item.Image,
-              SortNumber: 100,
+              SortNumber: item.Index + 1,
               PageID: item.PageID, 
               ProjectID: context.state.UserID
             }

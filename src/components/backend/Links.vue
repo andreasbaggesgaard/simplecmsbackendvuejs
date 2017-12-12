@@ -27,7 +27,6 @@
       return {
         links: [
              { title: "Pages", image: "src/assets/logo.png", text: "bb", link: "pages"}, 
-             { title: "Items", image: "src/assets/logo.png", text: "bb", link: "items"},
              { title: "Menu", image: "src/assets/logo.png", text: "bb", link: ""},
              { title: "Theme", image: "src/assets/logo.png", text: "bb", link: ""}
           ]

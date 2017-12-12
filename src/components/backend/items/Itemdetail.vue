@@ -1,86 +1,127 @@
 <template>
   <div>
 
-    <el-container style="height: 100%; border: 1px solid #eee;">
 
-      <sidenav></sidenav>
-    
-    <el-container>
-      <el-header style="text-align: right; font-size: 12px; height:0px;"></el-header>
-      <input type="hidden" v-model="id = $route.params.id" />
+        <div v-for="item in Items">
+          <div v-if="item.id == itemID  || item.id == $route.params.id">
+              <h3>Edit item</h3>
 
-          <el-row :gutter="0" style="padding-top:5%" type="flex" justify="center">
+              <div v-if="item.id == $route.params.id">
+                <el-button type="primary" plain @click="back">Go back</el-button>
+              </div>
 
-          <el-col :xs="24" :span="12">
-            <el-button type="primary" plain @click="back">Cancel</el-button><br /><br />
-
-            <el-form :xs="24" :span="8" ref="itemForm" v-loading="loading">
-               <el-form-item label="Name" v-if="SelectedItem[0].name">
-                  <el-input v-model="SelectedItem[0].name"></el-input>
+            <el-form ref="itemForm" :model="itemForm">
+              <el-form-item label="Name">
+                  <el-input v-model="item.name"></el-input>
                 </el-form-item>
 
-                <el-form-item label="Title" v-if="SelectedItem[0].title">
-                  <el-input v-model="SelectedItem[0].title"></el-input>
-                </el-form-item>
+                  <el-form-item label="Title" v-if="item.title">
+                    <el-input v-model="item.title"></el-input>
+                  </el-form-item>
 
-                <el-form-item label="Text" v-if="SelectedItem[0].text">
-                  <el-input v-model="SelectedItem[0].text"></el-input>
-                </el-form-item>
+                  <el-form-item label="Text" v-if="item.text">
+                    <el-input v-model="item.text"></el-input>
+                  </el-form-item>
 
-                <el-form-item label="Image" v-if="SelectedItem[0].image">
-                  <el-input v-model="SelectedItem[0].image"></el-input>
-                </el-form-item>
+                  <el-form-item label="Image" v-if="item.image">
+                    <br />
+                    <uploadimage v-bind:original="item.image" bool="false"></uploadimage>  
+                    <input type="hidden" v-bind:value="newImage = ItemImage" />                
+                  </el-form-item>
 
                 <el-form-item>
-                  <el-button type="primary" @click="submitForm('itemForm')">Edit</el-button>
+                  <el-button type="primary" @click="submitForm('itemForm', item)">Edit</el-button>
                 </el-form-item>
-              </el-form>
+                <input type="hidden" v-bind:value="itemid = itemID" />
+                <input type="hidden" v-bind:value="itemForm.sortnumber = item.sortNumber" />
+            </el-form>
 
-            </el-col>
-          </el-row>
+          </div>
+        </div>
 
-    </el-container>
-  </el-container>
+
 
   </div>
 </template>
 
 <script>
-import sidenav from "@/components/backend/Sidenav"
+import $ from "jquery";
+import uploadimage from '@/components/backend/Uploadimage';
 
   export default {
+    props:["itemID"],
     data() {
       return {
-        id: "",
-        loading: true
+          loading: true,
+          itemid: "",
+          newImage: "",
+          itemForm: {
+            sortnumber: ""
+          }
       }
     },
     methods: { 
-      back () {
-        this.$router.push("/items");
+      FetchItems() {
+        //this.loading = true;
+        let self = this; 
+        setTimeout(function(){ 
+          /*self.$store.commit('GetItems');   
+          self.$store.getters.GetAllItems;
+          self.loading = false;*/
+          self.$message({
+              type: 'success',
+              message: 'Item updated'
+            }); 
+        }, 3000); 
       },
-       submitForm(formName) {
-
+      back () {
+        this.$router.push("/pages");
+      },
+       submitForm(formName, item) {
+          if (item.name != "") {     
+            let obj = {
+              ID: this.itemid ? this.itemid : this.$route.params.id,
+              Name: item.name,
+              Title: item.title,
+              Text: item.text,
+              Image: this.newImage.length > 0 ? this.newImage : item.image,
+              SortNumber: this.itemForm.sortnumber,
+            }
+            this.$store.dispatch('EditItem', obj);  
+            this.$store.commit('SetDialog', false);  
+            let self = this; 
+            this.FetchItems();        
+            this.$store.commit('SetEditDialog', false);  
+            this.$store.commit('SetDialogClose2', false);  
+          } else { 
+            this.$notify({
+              title: 'Warning',
+              message: 'The name has to be filled out.',
+              type: 'warning'
+            });
+            return false; 
+           }
       }
     },
     beforeCreate () {
-      this.$store.commit('GetItems');       
+      this.$store.commit('GetUserID');
+      this.$store.commit('GetItems');        
     },
     created () {           
-      let self = this;
-      setTimeout(function(){ 
-          self.$store.commit('SetSelectedItemID', self.id);
-          self.loading = false;
-      }, 1000);
+      this.$store.commit('SetDialogClose2', true); 
+      this.$store.commit('SetItemImage', ""); 
     },
     computed: {
-        SelectedItem () {
-          return this.$store.getters.GetEditItem;
+        Items () {
+          return this.$store.getters.GetAllItems;
+        },
+        ItemImage () {
+          return this.$store.getters.GetItemImage;
         }
     },
     components: {
-      sidenav
-    } 
+      uploadimage
+    }
   };
 </script>
 

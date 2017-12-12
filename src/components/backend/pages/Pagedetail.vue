@@ -8,10 +8,9 @@
     <el-container id="editor-page">
       <el-header style="text-align: right; font-size: 12px; height:0px;"></el-header>
 
-      <div v-loading="loading">
-          <el-row :gutter="0" style="padding-top:5%" type="flex" justify="center">
+      <div>
+          <el-row :gutter="0" type="flex" justify="center">
             <el-col :xs="24" :span="12">
-            <el-button type="primary" plain @click="back">Cancel</el-button><br />
               <h2 class="e-title">Page editor</h2>
             </el-col>
           </el-row>
@@ -56,6 +55,9 @@
           <div v-for="page in Pages">
               <div v-if="page.id == $route.params.id">
               <input type="hidden" v-bind:value="templateID = page.templateID" />
+              <input type="hidden" v-bind:value="pageTitle = page.title" />
+              <input type="hidden" v-bind:value="pageText = page.text" />
+              <input type="hidden" v-bind:value="pageImg = page.image" />
                   <el-form :xs="24" :span="8" ref="pageForm">
                     <el-form-item label="* Name">
                         <el-input v-model="page.name"></el-input>
@@ -69,12 +71,19 @@
                         <el-input v-model="page.text"></el-input>
                       </el-form-item>
 
-                      <el-form-item label="Image">
-                        <el-input v-model="page.image"></el-input>
+                      <el-form-item label="Image"><br />  
+                          <div v-if="removeImage && !imageUploaded">
+                                <uploadimage original="" bool="true"></uploadimage>  
+                            </div>
+                            <div v-else>
+                                <uploadimage v-bind:original="pageImg" bool="true"></uploadimage>  
+                            </div>                
+                          <el-button type="text" v-if="!imageUploaded && pageImg.length > 0" @click="RemoveImage()">Remove image</el-button>
+                          <input type="hidden" v-bind:value="imageUploaded = UploadedImage" />
                       </el-form-item>
 
                       <el-form-item>
-                        <el-button type="primary" @click="submitForm('pageForm', page)">Save</el-button>
+                        <el-button type="primary" @click="submitForm('pageForm', page)" style="display: none;" id="og-button">Save</el-button>
                       </el-form-item>
                   </el-form>
               </div>
@@ -82,11 +91,11 @@
       </el-col>
     </el-row>
 
-        <div id="items-container">
+        <div id="items-container" v-loading="loading">
           <el-row>
             <el-col :md="24">
               <h3 class="hr">Step 2 - Assign items to this page</h3>
-              <p id="how-to">When you have created an item, then you can drag them up and down in the list to the right. The preview of the page will be listed accordingly to the template you have selected.</p>
+              <p id="how-to">When you have created an item, then you can drag them up and down in the list to the right. The preview of the page will be displayed accordingly to the template you have selected.</p>
 
 
                 <el-button type="primary" class="hr--2" plain @click="OpenDialog">Create new item +</el-button>
@@ -96,88 +105,82 @@
                   :visible.sync="Dialog"
                   width="70%"
                   :before-close="handleClose">
-                  <createitem></createitem>
+                  <createitem :pid="$route.params.id"></createitem>                 
                   <span slot="footer" class="dialog-footer">
                     <el-button @click="Dialog = false">Close</el-button>           
                   </span>
                 </el-dialog>
 
+                <el-dialog
+                  title=""
+                  :visible.sync="EditDialog"
+                  width="70%"
+                  :before-close="handleClose">
+                 <itemdetail v-bind:itemID="selectedItemID"></itemdetail>                
+                  <span slot="footer" class="dialog-footer">
+                    <el-button @click="EditDialog = false">Close</el-button>
+                    <!--<el-button @click="test">Close</el-button> -->            
+                  </span>
+                </el-dialog>
+
             </el-col>
           </el-row>
-
-            <el-row v-loading.fullscreen.lock="loadingItems">
+          
+            <el-row v-loading="loadingItems">
               <el-col :xs="24" :span="12" id="pp-con">
 
               <el-card id="page-preview">
-                <el-row v-if="selectedID == 1 || templateID == 1 &&  selectedID != 2">
-                    <el-col v-model="itemOrder" :md="12" v-for="(item, index) in itemOrder" :key="index">
-                        {{item.name}}
+                <el-row id="pre-top">
+                    <el-col :md="12">
+                        <h3 v-if="pageTitle">{{pageTitle}}</h3>
+                        <h5 style="font-weight:lighter" v-if="pageText">{{pageText}}</h5>
+                    </el-col>
+                    <el-col :md="12" id="pre-img">
+                        <div v-if="removeImage && !imageUploaded">
+                            <p>No image</p>
+                        </div>
+                        <div v-else>
+                            <img v-if="!imageUploaded" v-bind:src="pageImg" alt="" width="100%" />
+                            <img v-else v-bind:src="imageUploaded" alt="" width="100%" />
+                        </div>                      
                     </el-col>
                 </el-row> 
-                <el-row v-else-if="selectedID == 2 || templateID == 2 && selectedID != 1">
-                    <el-col v-model="itemOrder" :md="6" v-for="(item, index) in itemOrder" :key="index">
-                        {{item.name}}
-                    </el-col>
-                </el-row> 
+                <br />
+                <layout :selectedID="selectedID" :templateID="templateID" :preview="true"></layout>
               </el-card>
 
               </el-col>
 
                <el-col :xs="24" :span="12">
-
-
-          <!--<el-table
-            :data="JSON.parse(exampleList)"
-            style="width: 100%"
-            v-loading="loading">
-            <el-table-column type="expand">
-              <template slot-scope="props">
-                <p v-if="props.row.title">Title: {{ props.row.title }}</p>
-                <p v-if="props.row.text">Text: {{ props.row.text }}</p>
-                <p v-if="props.row.image">Image: {{ props.row.image }}</p>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="name"
-              label="Title">
-            </el-table-column>
-            </el-table-column>
-            <el-table-column
-              label="">
-              <template slot-scope="scope">
-                <el-button
-                  size="mini"
-                  @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-                <el-button
-                  size="mini"
-                  type="danger"
-                  @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
-              </template>
-            </el-table-column>
-          </el-table>-->
           
                 <div id="drag-container">
-                  <draggable v-model="itemOrder">
 
-                    <div v-for="(text, index) in itemOrder" :key="index" class="drag-box" v-bind:id="text.sortNumber = index + 1">
+                  <draggable v-model="itemOrder" v-if="ItemsNumber > 0" :options="{draggable:'.drag-box'}" @change="log" @start="drag=true" @end="drag=false">
+
+                    <div v-for="(item, index) in itemOrder" :key="index" class="drag-box" v-bind:id="item.sortNumber = index + 1">
                         <div class="drag-img">
                           <img src="../../../assets/arrow.png" width="15" height="auto" id="drag-icon" />                      
                         </div>
                         <div class="drag-text">
                         <el-tag type="info">{{index + 1}}</el-tag>
-                          <h3>{{text.name}}</h3> 
+                          <h3>{{item.name}}</h3> 
                         </div>
                         <div class="drag-action">
-                            asda
+                            <el-button @click="handleEdit(item)" class="drag-button">Edit</el-button>
+                            <el-button @click="handleDelete(item)" class="drag-button" type="danger">Delete</el-button>
                         </div>
-                      </div>
+                    </div>                  
 
-                  </draggable>
+                </draggable>
+                <p v-else>This page has no items yet.</p>
+
                 </div>
 
               </el-col>
-
+                <el-button type="primary" plain @click="back">Cancel</el-button>
+                <el-button type="primary" @click="SavePage()" >Save page</el-button>
           </el-row>
+
         </div>
 
 
@@ -190,12 +193,15 @@
 </template>
 
 <script>
-import $ from "jquery";
+import $ from "jquery"
 import sidenav from "@/components/backend/Sidenav"
 import draggable from 'vuedraggable'
 import createitem from "@/components/backend/items/CreateItem"
-import compareArrays from 'lodash/isequal';
-import forEach from 'lodash/foreach';
+import compareArrays from 'lodash/isequal'
+import forEach from 'lodash/foreach'
+import layout from '@/components/backend/items/Layout'
+import itemdetail from '@/components/backend/items/Itemdetail'
+import uploadimage from '@/components/backend/Uploadimage'
 
 
   export default {
@@ -208,46 +214,82 @@ import forEach from 'lodash/foreach';
         selectedID: "",
         dialogVisible: false,
         itemOrder: [],
-        newItemOrder: []
+        newItemOrder: [],
+        pageTitle: "",
+        pageText: "",
+        pageImg: "",
+        selectedItemID: "",
+        close: "",
+        close2: "",
+        imageUploaded: "",
+        removeImage: false,
+        imageForUpload: ""
       }
     },
     beforeCreate () {
       this.$store.commit('GetUserID');
       this.$store.commit('GetPages'); 
-      this.$store.commit('GetTemplates');   
-      this.$store.commit('GetPageItems', this.$route.params.id);   
+      this.$store.commit('GetTemplates'); 
+      //this.$store.commit('SetPageItems', []);  
+      this.$store.commit('GetPageItems', this.$route.params.id);  
+      this.$store.commit('SetImageCleared', false); 
     },
     created () {   
+      this.$store.commit('SetUploadedImage', "");
       this.loadingItems = true; 
       let self = this;
       setTimeout(function(){ 
         self.itemOrder = self.$store.getters.GetISorted;
         self.newItemOrder = self.$store.getters.GetISorted;
         self.loadingItems = false;
-       }, 1500);             
+       }, 2000);             
     },
     watch: {
         Dialog: function(val) {
+          if(val == false && this.close != true) { 
+            this.resetItems();
+          }
+        },
+        EditDialog: function(val) {
           if(val == false) { 
-            this.loadingItems = true;          
-            this.itemOrder = [];
-            let self = this;
-            setTimeout(function(){ 
-              self.$store.commit('GetPageItems', self.$route.params.id);
-            }, 1000);
-            setTimeout(function(){ 
-              self.itemOrder = self.$store.getters.GetISorted;
-              self.loadingItems = false; 
-            }, 2000); 
+            if(!this.close2) {
+              this.resetItems();
+            } else {
+              this.rebuildItems();
+            }
+            
           }
         }
     },
     methods: { 
-      OpenDialog () {
-        this.dialogVisible = true;
-        this.$store.commit('SetDialog', true);
+      RemoveImage () {
+        this.removeImage = true;
       },
-      handleClose(done) {
+      SavePage () {
+        $("#og-button").click();
+      },
+      resetItems () {
+          this.loadingItems = true;          
+          this.itemOrder = [];
+          let self = this;
+          setTimeout(function(){ 
+            self.$store.commit('GetPageItems', self.$route.params.id);
+          }, 1500);
+          setTimeout(function(){ 
+            self.itemOrder = self.$store.getters.GetISorted;
+            self.loadingItems = false; 
+          }, 3000); 
+      },
+      rebuildItems () {      
+          this.itemOrder = [];
+          this.itemOrder = this.$store.getters.GetISorted;
+      },
+      OpenDialog () {
+        this.$store.commit('SetDialog', true);
+        this.$store.commit('SetDialogClose', true);
+      },
+      handleClose(done) {    
+        this.$store.commit('SetDialogClose', false);    
         this.$confirm('Are you sure to close this dialog?')
           .then(_ => {
             done();
@@ -264,11 +306,10 @@ import forEach from 'lodash/foreach';
           self.$store.commit('GetPages');   
           self.$store.getters.GetAllPages;
           self.$router.push("/pages");          
-          self.$notify({
-            title: 'Success',
-            message: 'Page updated',
-            type: 'success'
-          });
+          self.$message({
+              type: 'success',
+              message: 'Page saved'
+            });
           self.loading = false;
         }, 1500); 
       },
@@ -292,33 +333,65 @@ import forEach from 'lodash/foreach';
                   Title: value.title,
                   Text: value.text,
                   Image: value.image,
-                  SortNumber: value.sortNumber,
-                  //PageID: value.pageID
+                  SortNumber: value.sortNumber
                 }
                 self.$store.dispatch('EditItem', itm);  
                 console.log("val? " , value)
             });
-          }         
+          }  
+
+          if(this.imageUploaded) {
+            this.imageForUpload = this.imageUploaded;
+          } else { this.imageForUpload = page.image } 
+
           let obj = {
             ID: page.id,
             Name: page.name,
             Title: page.title,
             Text: page.text,
-            Image: page.image,
+            Image: this.removeImage ? "" : this.imageForUpload,
             TemplateID: this.selectedID == "" ? this.templateID : this.selectedID
           }
           this.$store.dispatch('EditPage', obj);    
           this.FetchPages();  
                   
         } else { 
-          this.$notify({
-              title: 'Warning',
-              message: 'The name has to be filled out.',
-              type: 'warning'
-            });
+          this.$message.error('The name has to be filled out.');
           return false;            
           }
       },
+      handleEdit(item) {
+        this.selectedItemID = item.id;
+        this.$store.commit('SetEditDialog', true);
+        this.$store.commit('SetDialogClose2', true); 
+      },
+      test () {
+        this.selectedItemID = "";
+        this.$store.commit('SetEditDialog', false);
+        //this.$store.commit('SetDialogClose2', false);
+      },
+      handleDelete(item) {
+        this.$confirm('This will permanently delete ' + item.name + '. Continue?', 'Warning', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel', 
+          type: 'warning'
+        }).then(() => {
+          this.$store.dispatch('DeleteItem', item.id);    
+          this.resetItems();     
+          this.$message({
+            type: 'success',
+            message: 'Delete completed'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled'
+          });          
+        });   
+      },
+      log: function (evt){
+				console.log(evt)
+			}
     },
     computed: {
         Pages () {
@@ -326,6 +399,15 @@ import forEach from 'lodash/foreach';
         },
         Templates () {
           return JSON.stringify(this.$store.getters.GetAllTemplates);
+        },
+        UploadedImage () {
+            return this.$store.getters.GetUploadedImage;
+        },
+        ImageCleared () {
+            return this.$store.getters.GetImageCleared;
+        },
+        ItemsNumber () {
+          return this.$store.getters.GetPageItemsIndex;
         },
         itemsList: {
           get() {
@@ -339,19 +421,31 @@ import forEach from 'lodash/foreach';
         },
         Dialog: {
           get() {
+            this.close = this.$store.getters.GetDialogClose;
             return this.$store.getters.GetDialogVal;
           },
           set(val) {
             this.$store.commit('SetDialog', val)
-          }
-          
-        }
+          }          
+        },
+        EditDialog: {
+          get() {
+            this.close2 = this.$store.getters.GetDialogClose2;
+            return this.$store.getters.GetDialogEditVal;
+          },
+          set(val) {
+            this.$store.commit('SetEditDialog', val)
+          }          
+        },
         
     },
     components: {
       sidenav,
       draggable,
-      createitem
+      createitem,
+      layout,
+      itemdetail,
+      uploadimage
     } 
   };
 </script>
@@ -403,11 +497,12 @@ import forEach from 'lodash/foreach';
   flex: 1;
 }
 .drag-text {
-  flex: 4;
+  flex: 3;
   font-size: 0.8rem;
 }
 .drag-action {
-  flex: 1;
+  flex: 2;
+  min-width: 161px;
 }
 .drag-box:hover {
   cursor: pointer;
@@ -443,5 +538,17 @@ import forEach from 'lodash/foreach';
   max-width: 80%;
   min-height:400px;
   height: 100%;
+  margin-bottom: 20%;
+}
+.drag-button {
+  float: left;
+  font-size: 0.7rem;
+}
+#pre-top {
+  border: 3px dotted lightgrey;
+}
+#pre-img {
+  border-left: 3px dotted lightgrey;
+  min-height: 105px;
 }
 </style>

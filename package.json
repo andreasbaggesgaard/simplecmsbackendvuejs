@@ -14,6 +14,7 @@
     "element-ui": "^2.0.5",
     "file-system": "^2.2.2",
     "filter-files": "^0.4.0",
+    "firebase": "^4.8.0",
     "fs": "0.0.1-security",
     "fs-finder": "^1.8.1",
     "fs-mock": "^1.2.1",

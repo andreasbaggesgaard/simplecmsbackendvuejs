@@ -7,6 +7,7 @@ import Items from '@/components/backend/items/Items'
 import Itemdetail from '@/components/backend/items/Itemdetail'
 import Pages from '@/components/backend/pages/Pages'
 import Pagedetail from '@/components/backend/pages/Pagedetail'
+import Menu from '@/components/backend/Menu'
 
 Vue.use(Router)
 
@@ -19,6 +20,7 @@ export default new Router({
     { path: '/items/:id', name: 'item', component: Itemdetail },
     { path: '/pages', name: 'pages', component: Pages },
     { path: '/pages/:id', name: 'page', component: Pagedetail },
+    { path: '/menu', name: 'menu', component: Menu },
   ],
   scrollBehavior (to, from, savedPosition) {
     return { x: 0, y: 0 }
