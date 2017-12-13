@@ -109,13 +109,13 @@ import uploadimage from '@/components/backend/Uploadimage';
       }
     },
     methods: { 
-      create () {
+      /*create () {
         this.newItem = true;
       },
       cancel () {
         this.newItem = false;
         this.selected = false;
-      },
+      },*/
       GetCT (e) {
         this.selected = true;
         this.selectedID = e.target.id;
@@ -126,7 +126,7 @@ import uploadimage from '@/components/backend/Uploadimage';
         console.log(this.selectedID);
       },
       FetchItems() {
-        /*this.loading = true;
+        this.loading = true;
         let self = this; 
         setTimeout(function(){ 
           self.$store.commit('GetItems');   
@@ -136,7 +136,7 @@ import uploadimage from '@/components/backend/Uploadimage';
               type: 'success',
               message: 'Item created'
             });
-        }, 1000); */
+        }, 1000); 
           /*this.loading = true;          
           this.itemOrder = [];
           let self = this;
@@ -162,7 +162,7 @@ import uploadimage from '@/components/backend/Uploadimage';
             this.$store.dispatch('NewItem', obj);  
             this.$store.commit('SetDialog', false);  
             let self = this; 
-            //this.FetchItems();        
+            this.FetchItems();        
             $('.cardb').removeClass('selected01');
             $('.createb').removeClass('selected02');
             this.newItem = false;

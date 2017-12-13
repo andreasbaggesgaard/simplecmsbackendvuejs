@@ -118,7 +118,7 @@
     font-size: smaller;
   }
   #pre-title {
-    font-size: smaller;
+    font-weight: bolder;
   }
   #pre-card {
     border: 3px dotted lightgrey !important;

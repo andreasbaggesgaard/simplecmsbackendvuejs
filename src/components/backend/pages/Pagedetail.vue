@@ -126,7 +126,7 @@
             </el-col>
           </el-row>
           
-            <el-row v-loading="loadingItems">
+            <el-row v-loading="loadingItems" id="iSection">
               <el-col :xs="24" :span="12" id="pp-con">
 
               <el-card id="page-preview">
@@ -172,7 +172,8 @@
                     </div>                  
 
                 </draggable>
-                <p v-else>This page has no items yet.</p>
+                <el-alert title="This page has no items yet." type="warning" show-icon :closable="false" id="iWarning" v-else></el-alert>
+                
 
                 </div>
 
@@ -230,9 +231,10 @@ import uploadimage from '@/components/backend/Uploadimage'
       this.$store.commit('GetUserID');
       this.$store.commit('GetPages'); 
       this.$store.commit('GetTemplates'); 
-      //this.$store.commit('SetPageItems', []);  
       this.$store.commit('GetPageItems', this.$route.params.id);  
       this.$store.commit('SetImageCleared', false); 
+      this.itemOrder = [];
+      this.newItemOrder = [];
     },
     created () {   
       this.$store.commit('SetUploadedImage', "");
@@ -242,7 +244,7 @@ import uploadimage from '@/components/backend/Uploadimage'
         self.itemOrder = self.$store.getters.GetISorted;
         self.newItemOrder = self.$store.getters.GetISorted;
         self.loadingItems = false;
-       }, 2000);             
+       }, 3000);             
     },
     watch: {
         Dialog: function(val) {
@@ -256,8 +258,7 @@ import uploadimage from '@/components/backend/Uploadimage'
               this.resetItems();
             } else {
               this.rebuildItems();
-            }
-            
+            }           
           }
         }
     },
@@ -365,11 +366,6 @@ import uploadimage from '@/components/backend/Uploadimage'
         this.$store.commit('SetEditDialog', true);
         this.$store.commit('SetDialogClose2', true); 
       },
-      test () {
-        this.selectedItemID = "";
-        this.$store.commit('SetEditDialog', false);
-        //this.$store.commit('SetDialogClose2', false);
-      },
       handleDelete(item) {
         this.$confirm('This will permanently delete ' + item.name + '. Continue?', 'Warning', {
           confirmButtonText: 'Delete',
@@ -408,16 +404,6 @@ import uploadimage from '@/components/backend/Uploadimage'
         },
         ItemsNumber () {
           return this.$store.getters.GetPageItemsIndex;
-        },
-        itemsList: {
-          get() {
-            //return this.$store.getters.GetISorted;
-          },
-          set(val) {
-            //this.$store.commit('SetItems', val);
-            //this.newItemOrder = val;
-            //console.log(this.newItemOrder)
-          }
         },
         Dialog: {
           get() {
@@ -510,7 +496,7 @@ import uploadimage from '@/components/backend/Uploadimage'
 .drag-box:active {
   border: 1px solid black;
   font-weight: bolder !important;
-  background: #FBFBFB;
+  background: #f2f2f2;
 }
 #drag-icon {
   opacity: 0.6;
@@ -523,7 +509,7 @@ import uploadimage from '@/components/backend/Uploadimage'
   margin-top: 3%;
 }
 .el-tag:active {
-  background: red !important;
+  
 }
 #items-container {
   min-height: 650px;
@@ -550,5 +536,11 @@ import uploadimage from '@/components/backend/Uploadimage'
 #pre-img {
   border-left: 3px dotted lightgrey;
   min-height: 105px;
+}
+#iWarning {
+  width: 90% !important;
+}
+#iSection {
+  margin-bottom: 10%;
 }
 </style>

@@ -58,8 +58,9 @@
             <el-input type="textarea" v-model="pageForm.text"></el-input>
           </el-form-item>
 
-          <el-form-item prop="image" label="Image">
-            <el-input v-model="pageForm.image"></el-input>
+          <el-form-item prop="image" label="Image"><br />
+            <uploadimage original="" bool="true"></uploadimage>
+            <input type="hidden" v-bind:value="imageUploaded = UploadedImage" />
           </el-form-item>
 
           <el-form-item>
@@ -157,6 +158,7 @@
 import $ from "jquery";
 import sidenav from "@/components/backend/Sidenav"
 import items from "@/components/backend/items/Items"
+import uploadimage from '@/components/backend/Uploadimage'
 
   export default {
     data() {
@@ -166,6 +168,7 @@ import items from "@/components/backend/items/Items"
         newPage: false,
         selected: false,
         selectedID: "",
+        imageUploaded: "",
         pageForm: {
           name: "",
           title: "",
@@ -196,7 +199,10 @@ import items from "@/components/backend/items/Items"
       },
       Templates () {
         return JSON.stringify(this.$store.getters.GetAllTemplates);
-      }
+      },
+      UploadedImage () {
+          return this.$store.getters.GetUploadedImage;
+      },
     },
     methods: { 
       tableRowClassName({row, rowIndex}) { 
@@ -243,7 +249,7 @@ import items from "@/components/backend/items/Items"
               Name: this.pageForm.name,
               Title: this.pageForm.title,
               Text: this.pageForm.text,
-              Image: this.pageForm.image,
+              Image: this.imageUploaded,
               TemplateID: this.selectedID
             }
             this.$store.dispatch('NewPage', obj);    
@@ -293,7 +299,8 @@ import items from "@/components/backend/items/Items"
     },
     components: {
       sidenav,
-      items
+      items,
+      uploadimage
     } 
   };
 </script>

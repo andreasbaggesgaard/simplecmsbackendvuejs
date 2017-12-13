@@ -3,7 +3,7 @@
 
 
         <div v-for="item in Items">
-          <div v-if="item.id == itemID  || item.id == $route.params.id">
+          <div v-if="item.id == itemID">
               <h3>Edit item</h3>
 
               <div v-if="item.id == $route.params.id">
@@ -18,7 +18,7 @@
                   <el-form-item label="Title" v-if="item.title">
                     <el-input v-model="item.title"></el-input>
                   </el-form-item>
-
+ 
                   <el-form-item label="Text" v-if="item.text">
                     <el-input v-model="item.text"></el-input>
                   </el-form-item>
@@ -37,6 +37,11 @@
             </el-form>
 
           </div>
+          <!--<div v-else-if="item.id == $route.params.id">
+          
+          
+          </div>-->
+
         </div>
 
 
@@ -103,7 +108,7 @@ import uploadimage from '@/components/backend/Uploadimage';
            }
       }
     },
-    beforeCreate () {
+    beforeCreate () {    
       this.$store.commit('GetUserID');
       this.$store.commit('GetItems');        
     },

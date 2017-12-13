@@ -100,12 +100,12 @@ import sidenav from "@/components/backend/Sidenav"
     },
     methods: { 
       tableRowClassName({row, rowIndex}) {
-        if (row.used == true) {
+        /*if (row.used == true) {
           return 'warning-row';
         } else if (rowIndex == 10) {
           return 'success-row';
         }
-        return '';
+        return '';*/
       },
       create () {
         this.newItem = true;
@@ -188,6 +188,7 @@ import sidenav from "@/components/backend/Sidenav"
       border-left: 1px solid #e6ebf5;
       border-right: 1px solid #e6ebf5;
       border-top: 1px solid #e6ebf5;
+      margin-bottom: 10%;
 }
  .el-table .warning-row {
     color: red;

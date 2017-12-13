@@ -13,6 +13,9 @@ export default {
 </script>
 
 <style>
+body {
+  margin: 0 !important;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -94,5 +97,9 @@ a {
 }
 .el-aside {
   height: 100%;
+}
+.el-container {
+  /*margin-left:-1%;
+  margin-right:-1%;*/
 }
 </style>

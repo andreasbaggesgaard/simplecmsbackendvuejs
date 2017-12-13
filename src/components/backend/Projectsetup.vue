@@ -30,7 +30,7 @@
               <div style="padding: 14px;">
                 <span>{{theme.title}}</span> 
                 <div class="bottom clearfix"><br />
-                  <button type="text" class="mybutton02 button" @click="GetTheme" v-bind:id="theme.id">Select</button>
+                  <button type="text" class="mybutton02 button sbutton" @click="GetTheme" v-bind:id="theme.id">Select</button>
                 </div> 
               </div>
             </el-card>
@@ -53,10 +53,10 @@
 </div>
 
 <br />
-<el-button @click="prev" v-if="show2 || show3">Previous</el-button>
-<el-button @click="prev" v-else disabled>Previous step</el-button>
-<el-button type="primary" @click="next" v-if="show1 || show2">Next</el-button>
-<el-button type="success" @click="PutProject" v-else>Finish</el-button>
+<el-button @click="prev" v-if="show2 || show3" class="sbutton">Previous</el-button>
+<el-button @click="prev" v-else disabled class="sbutton">Previous step</el-button>
+<el-button type="primary" @click="next" v-if="show1 || show2" class="sbutton">Next</el-button>
+<el-button type="success" @click="PutProject" v-else class="sbutton">Finish</el-button>
 
   </div>
 </template>
@@ -155,7 +155,7 @@ import $ from "jquery";
   .hide {
     opacity: 0.5;
   }
-  button {
+  .sbutton {
     min-width: 134px;
   }
   .steps {

@@ -19,17 +19,21 @@ const apiGetUserAuth = api + "user/authenticated"
 const apiPostLogin = api + "user/login"
 const apiUserLogout = api + "user/logout"
 // Items
-const apiGetItems = api + "item/";
-const apiNewItem = api + "item/new";
-const apiDeleteItem = api + "item/";
+const apiGetItems = api + "item/"
+const apiNewItem = api + "item/new"
+const apiDeleteItem = api + "item/"
 // Contenttypes
-const apiGetContentTypes = api + "contenttype/";
+const apiGetContentTypes = api + "contenttype/"
 // Pages
-const apiGetPages = api + "pages/";
-const apiNewPage = api + "pages/new";
-const apiDeletePage = api + "pages/";
+const apiGetPages = api + "pages/"
+const apiNewPage = api + "pages/new"
+const apiDeletePage = api + "pages/"
 // Templates
-const apiGetTemplates = api + "template/";
+const apiGetTemplates = api + "template/"
+// menu
+const apiGetMenu = api + "menu/"
+const apiNewMenu = api + "menu/new"
+const apiDeleteMenuItem = api + "menu/";
 
 
 export const store = new Vuex.Store({
@@ -52,7 +56,8 @@ export const store = new Vuex.Store({
         Templates: [],
         UploadedImage: "",
         ImageCleared: false,
-        ItemImage: ""
+        ItemImage: "",
+        MenuItem: []
     },
     getters: {
         GetDialogVal: state => state.Dialog,
@@ -71,6 +76,7 @@ export const store = new Vuex.Store({
         GetUploadedImage: state => state.UploadedImage,
         GetImageCleared: state => state.ImageCleared,
         GetItemImage: state => state.ItemImage,
+        GetMenuItem: state => state.MenuItem,
         GetApiResponse(state) {
             let obj = {s: state.ApiSuccess, e: state.ApiError}
             return obj;
@@ -131,6 +137,9 @@ export const store = new Vuex.Store({
         },
         SetItemImage(state, payload) {
             state.ItemImage = payload;
+        },
+        SetMenuItem(state, payload) {
+            state.MenuItem = payload;
         },
         GetUserID (state) {
             var rawFile = new XMLHttpRequest();
@@ -193,6 +202,13 @@ export const store = new Vuex.Store({
             .then(function (response) {
                 state.Templates = response.data;
                 //console.log("templates " + JSON.stringify(response));  
+            }).catch(function (error) { console.log(error); });
+        },
+        GetMenuItems (state) {
+            axios.get(apiGetMenu + state.UserID)
+            .then(function (response) {
+                state.MenuItem = response.data;
+                //console.log("menu " + JSON.stringify(response));  
             }).catch(function (error) { console.log(error); });
         },
     }, 
@@ -262,8 +278,7 @@ export const store = new Vuex.Store({
               Title: item.Title,
               Text: item.Text,
               Image: item.Image,
-              SortNumber: item.SortNumber,
-              //PageID: item.pageID
+              SortNumber: item.SortNumber
             }
             axios.put(apiGetItems + obj.ID, obj)
             .then(function (response) {
@@ -301,6 +316,20 @@ export const store = new Vuex.Store({
             .then(function (response) {
                 console.log(response);
             })
+            .catch(function (error) { console.log(error); }); 
+        },
+        NewMenuItem (context, menuitem) {
+            let obj = {
+              PageID: menuitem.PageID,  
+              ProjectID: context.state.UserID
+            }
+            //console.log(obj);
+            axios.post(apiNewMenu, obj)
+            .then(function (response) { console.log(response); }).catch(function (error) { console.log(error); }); 
+        },
+        DeleteMenuItem (context, id) {
+            axios.delete(apiDeleteMenuItem + id)
+            .then(function (response) { console.log(response); })
             .catch(function (error) { console.log(error); }); 
         },
     } 
