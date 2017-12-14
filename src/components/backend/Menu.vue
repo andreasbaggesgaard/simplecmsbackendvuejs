@@ -9,16 +9,17 @@
       <el-header style="text-align: right; font-size: 12px; height:0px;"></el-header>
 
          <el-row type="flex" justify="center">
-            <el-col :md="20">
+            <el-col :md="16">
               <el-alert
                 title="Menu info"
                 type="info"
-                description="This is the full overview of all your items. You can also do everything from inside the 'Pages' section, which is where you actually use the items. "
+                description='Move the pages back and forth between the two boxes. All the pages in the "Menu" box will be displayed in the menu on your website.'
                 show-icon style="margin-bottom:4%;margin-top:4%;" :closable="false">
               </el-alert>
             </el-col>
           </el-row>
-{{menuList}}
+
+        <br />
         <el-transfer
           v-loading="loading"
           v-model="menuList"
@@ -30,9 +31,13 @@
           :button-texts="['Remove from menu', 'Add to menu']"
           :data="Pages">
         </el-transfer>
-{{loadedList}}<br />{{menuList}}
 
-      <el-button type="primary" @click="SaveMenu()">Save</el-button>
+        <br /><br />
+        <el-row type="flex" justify="center">
+            <el-col :md="24">
+                <el-button type="primary" @click="SaveMenu()">Save</el-button>
+            </el-col>
+        </el-row>
 
     </el-container>
   </el-container>
@@ -49,6 +54,7 @@ import forEach from 'lodash/foreach'
       return {
         loadedList: [],
         menuList: [],
+        pages: [],
         loading: false
       }
     },
@@ -73,19 +79,7 @@ import forEach from 'lodash/foreach'
           set(val) {
             this.$store.commit('SetPages', val)
           }        
-      },
-      /*MenuItems: {
-        get() {
-            let self = this;
-            forEach(this.$store.getters.GetMenuItem, function(value, key){
-              self.menuList.push(value.pageID);
-            });      
-            return this.menuList;
-          },
-          set(val) {
-            this.$store.commit('SetMenuItem', val)
-          }      
-      },*/
+      }
     },
     methods: { 
       fetchMenuItems (source) {
@@ -109,14 +103,10 @@ import forEach from 'lodash/foreach'
                       PageID: value
                     }
                   self.$store.dispatch('NewMenuItem', obj); 
-                  self.$store.commit('SetMenuItem', value);
-              }); 
-            //self.loadeList = [];
-            //self.menuList = [];
-            self.fetchMenuItems(self.menuList); 
-            self.loading = false;
-          }, 2000); 
-          
+              });    
+            self.loading = false;    
+            self.loadedList = self.menuList;  
+          }, 3000); 
       }
     },
     components: {

@@ -300,7 +300,7 @@ import uploadimage from '@/components/backend/Uploadimage'
       back () {
         this.$router.push("/pages");
       },
-      FetchPages() {
+      FetchPages(name) {
         this.loading = true;
         let self = this; 
         setTimeout(function(){ 
@@ -309,7 +309,7 @@ import uploadimage from '@/components/backend/Uploadimage'
           self.$router.push("/pages");          
           self.$message({
               type: 'success',
-              message: 'Page saved'
+              message: name + ' saved'
             });
           self.loading = false;
         }, 1500); 
@@ -354,7 +354,7 @@ import uploadimage from '@/components/backend/Uploadimage'
             TemplateID: this.selectedID == "" ? this.templateID : this.selectedID
           }
           this.$store.dispatch('EditPage', obj);    
-          this.FetchPages();  
+          this.FetchPages(page.name);  
                   
         } else { 
           this.$message.error('The name has to be filled out.');

@@ -15,15 +15,15 @@
                   <el-input v-model="item.name"></el-input>
                 </el-form-item>
 
-                  <el-form-item label="Title" v-if="item.title">
+                  <el-form-item label="Title" v-if="item.contentTypeID == '1' || item.contentTypeID == '4' || item.contentTypeID == '5' || item.contentTypeID == '6'">
                     <el-input v-model="item.title"></el-input>
                   </el-form-item>
  
-                  <el-form-item label="Text" v-if="item.text">
+                  <el-form-item label="Text" v-if="item.contentTypeID == '4' || item.contentTypeID == '5' || item.contentTypeID == '7' || item.contentTypeID == '2'">
                     <el-input v-model="item.text"></el-input>
                   </el-form-item>
 
-                  <el-form-item label="Image" v-if="item.image">
+                  <el-form-item label="Image" v-if="item.contentTypeID == '5' || item.contentTypeID == '6' || item.contentTypeID == '7' || item.contentTypeID == '3'">
                     <br />
                     <uploadimage v-bind:original="item.image" bool="false"></uploadimage>  
                     <input type="hidden" v-bind:value="newImage = ItemImage" />                

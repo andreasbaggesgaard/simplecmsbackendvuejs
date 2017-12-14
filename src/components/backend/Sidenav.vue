@@ -5,23 +5,23 @@
     <el-menu  style="height: 1200px; min-height: 100%" background-color="#545c64"
       text-color="#fff"
       active-text-color="#ffd04b">
-       <router-link to="admin"><el-menu-item index="1">
-        <template slot="title"><i class="el-icon-message"></i>Home</template>
+       <router-link to="/admin"><el-menu-item index="1">
+        <template slot="title"><i class="el-icon-menu"></i>Home</template>
       </el-menu-item></router-link>
-      <router-link to="pages"><el-menu-item index="2">
-        <template slot="title"><i class="el-icon-message"></i>Pages</template>
+      <router-link to="/pages"><el-menu-item index="2">
+        <template slot="title"><i class="el-icon-document"></i>Pages</template>
       </el-menu-item></router-link>
-      <router-link to="menu"><el-menu-item index="3">
-        <template slot="title"><i class="el-icon-message"></i>Menu</template>
+      <router-link to="/menu"><el-menu-item index="3">
+        <template slot="title"><i class="el-icon-view"></i>Menu</template>
       </el-menu-item></router-link>
-      <el-menu-item index="4">
-        <template slot="title"><i class="el-icon-message"></i>Theme</template>
+      <el-menu-item index="4" class="inactive">
+        <template slot="title"><i class="el-icon-picture"></i>Theme</template>
       </el-menu-item>
-      <el-menu-item index="5">
-        <template slot="title"><i class="el-icon-message"></i>Configuration</template>
+      <el-menu-item index="5" class="inactive">
+        <template slot="title"><i class="el-icon-setting"></i>Configuration</template>
       </el-menu-item>
-      <el-menu-item index="6">
-        <template slot="title"><i class="el-icon-message"></i>Profile</template>
+      <el-menu-item index="6" class="inactive">
+        <template slot="title"><i class="el-icon-edit-outline"></i>Profile</template>
       </el-menu-item>
        <el-menu-item index="7" @click="Logout()">
         <template slot="title"><i class="el-icon-message"></i>Logout</template>
@@ -64,5 +64,8 @@
   
   .el-aside {
     color: #333;
+  }
+  .inactive {
+    color: grey !important;
   }
 </style>

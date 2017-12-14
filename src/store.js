@@ -257,6 +257,7 @@ export const store = new Vuex.Store({
               Text: item.Text,
               Image: item.Image,
               SortNumber: item.Index + 1,
+              ContentTypeID: item.ContentTypeID,
               PageID: item.PageID, 
               ProjectID: context.state.UserID
             }
@@ -323,13 +324,14 @@ export const store = new Vuex.Store({
               PageID: menuitem.PageID,  
               ProjectID: context.state.UserID
             }
-            //console.log(obj);
+            console.log("post menu: ", obj);
             axios.post(apiNewMenu, obj)
-            .then(function (response) { console.log(response); }).catch(function (error) { console.log(error); }); 
+            .then(function (response) { /*console.log(response);*/ }).catch(function (error) { console.log(error); }); 
         },
         DeleteMenuItem (context, id) {
+            console.log("delete menu: ", id);
             axios.delete(apiDeleteMenuItem + id)
-            .then(function (response) { console.log(response); })
+            .then(function (response) { /*console.log(response);*/ })
             .catch(function (error) { console.log(error); }); 
         },
     } 

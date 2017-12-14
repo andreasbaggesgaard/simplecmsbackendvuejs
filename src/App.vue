@@ -97,6 +97,7 @@ a {
 }
 .el-aside {
   height: 100%;
+  margin-left:-0.4%;
 }
 .el-container {
   /*margin-left:-1%;

@@ -188,10 +188,6 @@ import uploadimage from '@/components/backend/Uploadimage'
       this.$store.commit('GetTemplates'); 
     },
     created () {
-        /*let self = this; 
-        setTimeout(function(){ 
-          self.loading = false;
-        }, 2000);    */
     },
     computed: {
       Pages () {
@@ -206,12 +202,12 @@ import uploadimage from '@/components/backend/Uploadimage'
     },
     methods: { 
       tableRowClassName({row, rowIndex}) { 
-        if (row.used == true) {
+        /*if (row.used == true) {
           return 'warning-row';
         } else if (rowIndex == 10) {
           return 'success-row';
         }
-        return '';
+        return '';*/
       },
       handleClick(tab, event) {
         console.log(tab, event);
@@ -255,11 +251,11 @@ import uploadimage from '@/components/backend/Uploadimage'
             this.$store.dispatch('NewPage', obj);    
             let self = this; 
             this.FetchPages();            
-            this.$notify({
-              title: 'Success',
-              message: 'Page created',
-              type: 'success'
+            this.$message({
+              type: 'success',
+              message: 'Page created: ' + obj.Name
             });
+            $('html, body').animate({ scrollTop: 0 }, 'fast');
             this.newPage = false;
             this.selected = false;
             this.selectedID = "";

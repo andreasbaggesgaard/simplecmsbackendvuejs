@@ -13,7 +13,7 @@
                 <div style="padding: 0px;">
                   <h3 style="font-weight:lighter">{{link.name}}</h3> 
                   <div class="bottom clearfix">
-                    <button type="text" class="mybutton02 button createb" @click="GetCT" v-bind:id="link.name">Select</button>
+                    <button type="text" class="mybutton02 button createb" @click="GetCT" v-bind:id="link.id">Select</button>
                   </div>  
                 </div>
               </el-card>
@@ -30,16 +30,15 @@
           </el-form-item>
           
           <div v-if="selected">
-          <el-form-item prop="title" label="Title" v-if="selectedID == 'Title' || selectedID == 'Title and Text' || selectedID == 'Title, Text and Image' || selectedID == 'Title and Image'">
+          <el-form-item prop="title" label="Title" v-if="selectedID == '1' || selectedID == '4' || selectedID == '5' || selectedID == '6'">
             <el-input v-model="itemsForm.title"></el-input>
           </el-form-item>
           
-          <el-form-item prop="text" label="Text" v-if="selectedID == 'Title and Text' || selectedID == 'Title, Text and Image' || selectedID == 'Text and Image' || selectedID == 'Text'">
+          <el-form-item prop="text" label="Text" v-if="selectedID == '4' || selectedID == '5' || selectedID == '7' || selectedID == '2'">
             <el-input type="textarea" v-model="itemsForm.text"></el-input>
           </el-form-item>
 
-          <el-form-item prop="image" label="Image" v-if="selectedID == 'Title, Text and Image' || selectedID == 'Title and Image' || selectedID == 'Text and Image' || selectedID == 'Image'">
-            <!--<el-input v-model="itemsForm.image"></el-input>-->
+          <el-form-item prop="image" label="Image" v-if="selectedID == '5' || selectedID == '6' || selectedID == '7' || selectedID == '3'">
             <br />
             <uploadimage original="" bool="false"></uploadimage>
             <input type="hidden" v-bind:value="itemsForm.image = ItemImage" />
@@ -156,6 +155,7 @@ import uploadimage from '@/components/backend/Uploadimage';
               Title: this.itemsForm.title,
               Text: this.itemsForm.text,
               Image: this.itemsForm.image,
+              ContentTypeID: this.selectedID,
               PageID: this.$route.params.id,
               Index: this.iNumber
             }
