@@ -4,7 +4,7 @@
     <el-row style="padding-left:5%;padding-right:5%;">
       <el-col :xs="24" :span="11" v-for="(link, index) in links" :key="index" style="margin:2%">
         <el-card :body-style="{ padding: '10px' }">
-          <img v-bind:src="link.image" class="image">
+          <div v-html="link.image"></div>
           <div style="padding: 0px;">
             <h2>{{link.title}}</h2> 
             <p>{{link.text}}</p>
@@ -26,7 +26,7 @@
     data() {
       return {
         links: [
-             { title: "Pages", image: "src/assets/logo.png", text: "bb", link: "pages"}, 
+             { title: "Pages", image: '<i class="el-icon-document"></i>', text: "bb", link: "pages"}, 
              { title: "Menu", image: "src/assets/logo.png", text: "bb", link: ""},
              { title: "Theme", image: "src/assets/logo.png", text: "bb", link: ""}
           ]

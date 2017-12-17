@@ -2,6 +2,7 @@
   <div>
 
 
+<div v-loading="loading">
 <h2 class="title">Hi! We can see it is your first time logging in :-)</h2>
 <h3 class="subtitle">Go through the initial configuration, and you will be good to go!</h3><br />
 
@@ -57,6 +58,8 @@
 <el-button @click="prev" v-else disabled class="sbutton">Previous step</el-button>
 <el-button type="primary" @click="next" v-if="show1 || show2" class="sbutton">Next</el-button>
 <el-button type="success" @click="PutProject" v-else class="sbutton">Finish</el-button>
+</div>
+ 
 
   </div>
 </template>
@@ -67,6 +70,7 @@ import $ from "jquery";
   export default {
      data() {
         return {
+           loading: false,
            active: 1,
            show1: true,
            show2: false,
@@ -111,19 +115,25 @@ import $ from "jquery";
             console.log(this.selectedTheme);
           },
           PutProject() {
-            let obj = {
-              Name: this.name,
-              Background: this.color,
-              NavbarColor: "not yet",
-              Theme: this.selectedTheme,
-              Configured: true
-            }
-            this.$store.dispatch('EditProject', obj);           
-            this.$router.push('/admin');     
-            this.$message({
-              message: 'The setup was complete.',
-              type: 'success'
-            });     
+            this.loading = true;
+            let self = this;
+            setTimeout(function(){ 
+                let obj = {
+                  Name: self.name,
+                  Background: self.color,
+                  NavbarColor: "not yet",
+                  Theme: self.selectedTheme,
+                  Configured: true
+                }
+                self.$store.dispatch('EditProject', obj);           
+                self.$router.push('/admin');     
+                self.$message({
+                  message: 'The setup was complete.',
+                  type: 'success'
+                }); 
+                self.loading = false;
+             }, 2000);
+                
           }
       },
       computed: {
@@ -166,7 +176,7 @@ import $ from "jquery";
     margin: 0 auto;
   }
   body {
-    min-height:1200px;
+    
   }
   .mybutton {
         display: inline-block;

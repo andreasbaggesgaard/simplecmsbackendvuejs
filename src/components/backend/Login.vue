@@ -59,8 +59,8 @@
           if (valid) {
             let self = this;
             this.$store.dispatch('Login', { u: this.ruleForm.username, p: this.ruleForm.password });
-            let obj = this.$store.getters.GetApiResponse;
-            setTimeout(function(){              
+            setTimeout(function(){         
+               let obj = self.$store.getters.GetApiResponse;     
                console.log("apierror " + obj.e);
                console.log("apisuccess " + obj.s);
                if(obj.e === 400) {
@@ -70,7 +70,7 @@
                   });
                } else if(obj.s === 200) {
                  self.$message({
-                    message: 'Welcome to your CMS dashboard.',
+                    message: 'Login success.',
                     type: 'success'
                   });
                }

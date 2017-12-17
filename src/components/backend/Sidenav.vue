@@ -2,7 +2,7 @@
   <div>
   
   <el-aside width="100%" style="min-height: auto%;min-width:200px;">
-    <el-menu  style="height: 1200px; min-height: 100%" background-color="#545c64"
+    <el-menu  style="min-height: 100%; height: 900px;" background-color="#545c64"
       text-color="#fff"
       active-text-color="#ffd04b">
        <router-link to="/admin"><el-menu-item index="1">

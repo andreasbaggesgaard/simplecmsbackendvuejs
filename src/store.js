@@ -45,8 +45,8 @@ export const store = new Vuex.Store({
         Project: [],
         UserAuth: "",
         UserID: "",
-        ApiSuccess: 0,
-        ApiError: 0,
+        ApiSuccess: "",
+        ApiError: "",
         Configured: "",
         Items: [],
         PageItems: [],
@@ -201,14 +201,12 @@ export const store = new Vuex.Store({
             axios.get(apiGetTemplates + state.UserID)
             .then(function (response) {
                 state.Templates = response.data;
-                //console.log("templates " + JSON.stringify(response));  
             }).catch(function (error) { console.log(error); });
         },
         GetMenuItems (state) {
             axios.get(apiGetMenu + state.UserID)
             .then(function (response) {
                 state.MenuItem = response.data;
-                //console.log("menu " + JSON.stringify(response));  
             }).catch(function (error) { console.log(error); });
         },
     }, 
@@ -326,12 +324,12 @@ export const store = new Vuex.Store({
             }
             console.log("post menu: ", obj);
             axios.post(apiNewMenu, obj)
-            .then(function (response) { /*console.log(response);*/ }).catch(function (error) { console.log(error); }); 
+            .then(function (response) { console.log(response); }).catch(function (error) { console.log(error); }); 
         },
         DeleteMenuItem (context, id) {
             console.log("delete menu: ", id);
             axios.delete(apiDeleteMenuItem + id)
-            .then(function (response) { /*console.log(response);*/ })
+            .then(function (response) { console.log(response); })
             .catch(function (error) { console.log(error); }); 
         },
     } 

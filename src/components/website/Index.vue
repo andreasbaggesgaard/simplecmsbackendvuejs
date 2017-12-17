@@ -1,19 +1,26 @@
 <template>
   <div>
+  
+<navbar></navbar>
 
-
-website
+<br /><br />
+<h2><i class="el-icon-info"></i> Frontpage option not yet available</h2>
 
   </div>
 </template>
 
 <script>
-
+import navbar from "@/components/website/Navbar"
 
   export default {
      data() {
         return {
         } 
+      },
+      beforeCreate () {
+        this.$store.commit('GetUserID');
+        this.$store.commit('GetPages'); 
+        this.$store.commit('GetItems');   
       },
       computed: {
 
@@ -22,7 +29,7 @@ website
         
       }, 
       components: {
-          
+        navbar
       }
     }; 
 </script>

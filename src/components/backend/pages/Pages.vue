@@ -13,7 +13,7 @@
        <el-button size="small" style="float:right; margin:2%;">Need help <i class="el-icon-question"></i></el-button>
       <el-col :md="24">
           <el-tabs type="card" v-bind:value="tabsValue" @tab-click="handleClick" style="padding-left:2%;padding-right:1%;">
-            <el-tab-pane name="Pages" label="Pages"><span slot="label"><i class="el-icon-date"></i> Pages </span>
+            <el-tab-pane name="Pages" label="Pages"><span slot="label"><i class="el-icon-document"></i> Pages </span>
 
 
 <el-row :gutter="0" style="padding-top:3%">
@@ -30,7 +30,7 @@
           <el-alert title="The template is the layout of your page. New will be added regularly." type="info" show-icon :closable="false"></el-alert><br />
             <el-col :xs="24" :sm="12" :md="12"  v-for="(link, index) in JSON.parse(Templates)" :key="index" style="padding:5px">
               <el-card :body-style="{ padding: '10px' }">
-               <img v-bind:src="link.previewImage" class="image">
+               <img v-bind:src="link.previewImage" class="image" style="max-height:140px;">
                 <div style="padding: 0px;">
                   <h3 style="font-weight:lighter">{{link.name}}</h3> 
                   <div class="bottom clearfix">
@@ -268,7 +268,7 @@ import uploadimage from '@/components/backend/Uploadimage'
       },
       handleEdit(index, row) {
         console.log(index, row);
-        this.$router.push({ name: 'page', params: { id: row.id }});
+        this.$router.push({ name: 'pagedetail', params: { id: row.id }});
       },
       handleDelete(index, row) {
         console.log(index, row);

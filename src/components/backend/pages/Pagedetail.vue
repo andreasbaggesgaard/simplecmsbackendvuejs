@@ -36,15 +36,16 @@
       <el-col :xs="24" :span="12">
 
         <el-row style="padding-left:5%;padding-right:5%;">
-            <el-col :xs="24" :sm="12" :md="12"  v-for="(link, index) in JSON.parse(Templates)" :key="index" style="padding:5px">
-              <el-card :body-style="{ padding: '10px' }" v-bind:class="{ selected01: link.id == templateID }">
-               <img v-bind:src="link.previewImage" class="image">
+            <el-col :xs="24" :sm="12" :md="12"  v-for="(template, index) in JSON.parse(Templates)" :key="index" style="padding:5px">
+              <el-card :body-style="{ padding: '10px' }" v-bind:class="{ selected01: template.id == templateID }">
+               <img v-bind:src="template.previewImage" class="image" style="max-height:140px;">
                 <div style="padding: 0px;">
-                  <h3 style="font-weight:lighter">{{link.name}}</h3> 
+                  <h3 style="font-weight:lighter">{{template.name}}</h3> 
                   <div class="bottom clearfix">
-                    <button type="text" class="mybutton02 button" v-bind:class="{ selected02: link.id == templateID }" @click="GetT" v-bind:id="link.id">Select</button>
+                    <button type="text" class="mybutton02 button" v-bind:class="{ selected02: template.id == templateID }" @click="GetT(template)" v-bind:id="template.id">Select</button>
                   </div>  
                 </div>
+                <input type="hidden" v-bind:value="template.id == templateID ? preTemplateName = template.name : ''" />
               </el-card>
             </el-col>
           </el-row>
@@ -118,8 +119,7 @@
                   :before-close="handleClose">
                  <itemdetail v-bind:itemID="selectedItemID"></itemdetail>                
                   <span slot="footer" class="dialog-footer">
-                    <el-button @click="EditDialog = false">Close</el-button>
-                    <!--<el-button @click="test">Close</el-button> -->            
+                    <el-button @click="EditDialog = false">Close</el-button>       
                   </span>
                 </el-dialog>
 
@@ -146,7 +146,8 @@
                     </el-col>
                 </el-row> 
                 <br />
-                <layout :selectedID="selectedID" :templateID="templateID" :preview="true"></layout>
+                <layout :selectedID="selectedPreTemplateName" :templateID="preTemplateName" :preview="true" :data="0" :page="0"></layout>
+
               </el-card>
 
               </el-col>
@@ -213,6 +214,8 @@ import uploadimage from '@/components/backend/Uploadimage'
         loadingItems: false,
         templateID: "",
         selectedID: "",
+        preTemplateName: "",
+        selectedPreTemplateName: "",
         dialogVisible: false,
         itemOrder: [],
         newItemOrder: [],
@@ -314,12 +317,14 @@ import uploadimage from '@/components/backend/Uploadimage'
           self.loading = false;
         }, 1500); 
       },
-      GetT (e) {
-        this.selectedID = e.target.id;
+      GetT (template) {
+        console.log(template)
+        this.selectedID = template.id;
+        this.selectedPreTemplateName = template.name;
         $('.el-card').removeClass('selected01');
         $('.mybutton02').removeClass('selected02');
-        $(e.target).parent().parent().parent().parent().addClass('selected01');
-        $(e.target).addClass('selected02');
+        $("#" + template.id).parent().parent().parent().parent().addClass('selected01');
+        $("#" + template.id).addClass('selected02');
         console.log(this.selectedID);
       },
        submitForm(formName, page) {          
