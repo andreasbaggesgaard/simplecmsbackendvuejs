@@ -10,11 +10,27 @@
 
     
    <el-row>
-       <el-button size="small" style="float:right; margin:2%;">Need help <i class="el-icon-question"></i></el-button>
+
+   <el-breadcrumb separator-class="el-icon-arrow-right" id="bread">
+      <el-breadcrumb-item :to="{ path: '/admin' }">Home</el-breadcrumb-item>
+      <el-breadcrumb-item>Pages</el-breadcrumb-item>
+  </el-breadcrumb>
+
+   <el-dialog
+      title=""
+      :visible.sync="help"
+      width="70%">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/WwWucO2KXEY" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>                
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="help = false">Close</el-button>           
+      </span>
+    </el-dialog>
+
+
+       <el-button size="small" style="float:right; margin:2%;" @click="OpenHelp">Need help <i class="el-icon-question"></i></el-button>
       <el-col :md="24">
           <el-tabs type="card" v-bind:value="tabsValue" @tab-click="handleClick" style="padding-left:2%;padding-right:1%;">
             <el-tab-pane name="Pages" label="Pages"><span slot="label"><i class="el-icon-document"></i> Pages </span>
-
 
 <el-row :gutter="0" style="padding-top:3%">
   <div v-if="newPage">
@@ -60,7 +76,7 @@
 
           <el-form-item prop="image" label="Image"><br />
             <uploadimage original="" bool="true"></uploadimage>
-            <input type="hidden" v-bind:value="imageUploaded = UploadedImage" />
+            <input type="text" v-bind:value="imageUploaded = UploadedImage" />
           </el-form-item>
 
           <el-form-item>
@@ -138,7 +154,7 @@
     </el-tab-pane>
 
     <!-- Items -->
-    <el-tab-pane name="Items" label="Items"><span slot="label"><i class="el-icon-date"></i> Items </span>
+    <el-tab-pane name="Items" label="Items"><span slot="label"  @click="RefreshItems()"><i class="el-icon-date"></i> Items </span>
               
               <items></items>
                          
@@ -167,6 +183,7 @@ import uploadimage from '@/components/backend/Uploadimage'
         loading: false,
         newPage: false,
         selected: false,
+        help: false,
         selectedID: "",
         imageUploaded: "",
         pageForm: {
@@ -185,7 +202,7 @@ import uploadimage from '@/components/backend/Uploadimage'
     beforeCreate () {
       this.$store.commit('GetUserID');
       this.$store.commit('GetPages');         
-      this.$store.commit('GetTemplates'); 
+      this.$store.commit('GetTemplates');   
     },
     created () {
     },
@@ -201,6 +218,9 @@ import uploadimage from '@/components/backend/Uploadimage'
       },
     },
     methods: { 
+      RefreshItems () {
+        this.$store.commit('GetItems');
+      },
       tableRowClassName({row, rowIndex}) { 
         /*if (row.used == true) {
           return 'warning-row';
@@ -208,6 +228,9 @@ import uploadimage from '@/components/backend/Uploadimage'
           return 'success-row';
         }
         return '';*/
+      },
+      OpenHelp () {
+        this.help = true;
       },
       handleClick(tab, event) {
         console.log(tab, event);
@@ -236,32 +259,41 @@ import uploadimage from '@/components/backend/Uploadimage'
           self.$store.commit('GetPages');   
           self.$store.getters.GetAllPages;
           self.loading = false;
-        }, 1000); 
+        }, 3000); 
       },
-      submitForm(formName) {          
-          this.$refs[formName].validate((valid) => {       
-          if (valid) {
-            let obj = {
-              Name: this.pageForm.name,
-              Title: this.pageForm.title,
-              Text: this.pageForm.text,
-              Image: this.imageUploaded,
-              TemplateID: this.selectedID
-            }
-            this.$store.dispatch('NewPage', obj);    
-            let self = this; 
-            this.FetchPages();            
-            this.$message({
-              type: 'success',
-              message: 'Page created: ' + obj.Name
+      submitForm(formName) {     
+          if(this.selectedID == "") {
+            this.$notify({
+                title: 'Warning',
+                message: 'Select a template',
+                type: 'warning'
+              });
+            return false;
+          } else {
+            this.$refs[formName].validate((valid) => {       
+              if (valid) {
+                let obj = {
+                  Name: this.pageForm.name,
+                  Title: this.pageForm.title,
+                  Text: this.pageForm.text,
+                  Image: this.imageUploaded,
+                  TemplateID: this.selectedID
+                }
+                this.$store.dispatch('NewPage', obj);    
+                let self = this; 
+                this.FetchPages();            
+                this.$message({
+                  type: 'success',
+                  message: 'Page created: ' + obj.Name
+                });
+                $('html, body').animate({ scrollTop: 0 }, 'fast');
+                this.newPage = false;
+                this.selected = false;
+                this.selectedID = "";
+                this.resetForm(formName);     
+              } else { return false; }
             });
-            $('html, body').animate({ scrollTop: 0 }, 'fast');
-            this.newPage = false;
-            this.selected = false;
-            this.selectedID = "";
-            this.resetForm(formName);           
-          } else { return false; }
-        });
+          }
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();

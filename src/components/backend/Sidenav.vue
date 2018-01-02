@@ -24,7 +24,7 @@
         <template slot="title"><i class="el-icon-edit-outline"></i>Profile</template>
       </el-menu-item>
        <el-menu-item index="7" @click="Logout()">
-        <template slot="title"><i class="el-icon-message"></i>Logout</template>
+        <template slot="title"><i class="el-icon-d-arrow-left"></i>Logout</template>
       </el-menu-item>
     </el-menu>
   </el-aside>

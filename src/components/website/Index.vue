@@ -4,7 +4,7 @@
 <navbar></navbar>
 
 <br /><br />
-<h2><i class="el-icon-info"></i> Frontpage option not yet available</h2>
+<h2><i class="el-icon-info"></i> Frontpage not configured</h2>
 
   </div>
 </template>

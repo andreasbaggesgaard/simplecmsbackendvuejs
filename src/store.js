@@ -168,9 +168,9 @@ export const store = new Vuex.Store({
             var uid = state.UserID;
             console.log(uid);
             localStorage.getItem('simplecmsloggedinTrue') === null ? state.UserAuth = false : state.UserAuth = true;           
-            /*axios.get(apiGetUserAuth)
+            axios.get(apiGetUserAuth)
             .then(function (response) { console.log("auth? " + response.data); })
-            .catch(function (error) { console.log(error); });  */          
+            .catch(function (error) { console.log(error); });          
         },
         GetItems (state) {
             axios.get(apiGetItems + state.UserID)

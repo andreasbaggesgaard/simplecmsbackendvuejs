@@ -26,7 +26,7 @@
                   <el-form-item label="Image" v-if="item.contentTypeID == '5' || item.contentTypeID == '6' || item.contentTypeID == '7' || item.contentTypeID == '3'">
                     <br />
                     <uploadimage v-bind:original="item.image" bool="false"></uploadimage>  
-                    <input type="hidden" v-bind:value="newImage = ItemImage" />                
+                    <input type="hidden" v-bind:value="newImage = ItemImage" />            
                   </el-form-item>
 
                 <el-form-item>
@@ -57,8 +57,10 @@ import uploadimage from '@/components/backend/Uploadimage';
     props:["itemID"],
     data() {
       return {
+        yo: [],
           loading: true,
           itemid: "",
+          ogImage: "",
           newImage: "",
           itemForm: {
             sortnumber: ""
@@ -77,12 +79,13 @@ import uploadimage from '@/components/backend/Uploadimage';
               type: 'success',
               message: 'Item updated'
             }); 
-        }, 3000); 
+        }, 5000); 
       },
       back () {
         this.$router.push("/pages");
       },
        submitForm(formName, item) {
+         
           if (item.name != "") {     
             let obj = {
               ID: this.itemid ? this.itemid : this.$route.params.id,
@@ -98,6 +101,8 @@ import uploadimage from '@/components/backend/Uploadimage';
             this.FetchItems();        
             this.$store.commit('SetEditDialog', false);  
             this.$store.commit('SetDialogClose2', false);  
+            //this.$store.commit('SetUploadedImage', "");
+            this.$store.commit('SetItemImage', "");
           } else { 
             this.$notify({
               title: 'Warning',

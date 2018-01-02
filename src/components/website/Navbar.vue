@@ -8,7 +8,6 @@
   <span class="p-name" v-if="Project.name">{{Project.name}}</span>
 </div>
 
-
   </div>
 </template>
 
@@ -19,9 +18,9 @@ import $ from 'jquery'
   export default {
      data() {
         return {
-          activeIndex: '1',
           pages: [],
-          menuItems: []
+          menuItems: [],
+          length: 0
         } 
       },
       beforeCreate () {
@@ -39,7 +38,7 @@ import $ from 'jquery'
 
               forEach(self.$store.getters.GetMenuItem, function(val, i){
                   if(value.id == val.pageID) {
-                    self.menuItems.push(value);             
+                    self.menuItems.push(value);          
                   }
               });
 
@@ -98,7 +97,7 @@ import $ from 'jquery'
         padding: 0 20px;
   }
   .menu li:first-child {
-    color: #409EFF;
+    /*color: #409EFF;*/
   }
   .menu li a {
     color: #000;

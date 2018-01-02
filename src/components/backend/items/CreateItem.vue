@@ -128,14 +128,14 @@ import uploadimage from '@/components/backend/Uploadimage';
         this.loading = true;
         let self = this; 
         setTimeout(function(){ 
-          self.$store.commit('GetItems');   
-          self.$store.getters.GetAllItems;
+          //self.$store.commit('GetItems');   
+          //self.$store.getters.GetAllItems;
           self.loading = false;
             self.$message({
               type: 'success',
               message: 'Item created'
             });
-        }, 1000); 
+        }, 4500); 
           /*this.loading = true;          
           this.itemOrder = [];
           let self = this;

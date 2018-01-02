@@ -43,6 +43,7 @@
               label="">
               <template slot-scope="scope">
                 <el-button
+                disabled
                   size="mini"
                   @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
                 <el-button

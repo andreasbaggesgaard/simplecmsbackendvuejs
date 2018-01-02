@@ -8,6 +8,12 @@
     <el-container id="editor-page">
       <el-header style="text-align: right; font-size: 12px; height:0px;"></el-header>
 
+      <el-breadcrumb separator-class="el-icon-arrow-right" id="bread">
+        <el-breadcrumb-item :to="{ path: '/admin' }">Home</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/pages' }">Pages</el-breadcrumb-item>
+        <el-breadcrumb-item>{{$route.params.id}}</el-breadcrumb-item>
+      </el-breadcrumb>
+
       <div>
           <el-row :gutter="0" type="flex" justify="center">
             <el-col :xs="24" :span="12">
@@ -125,26 +131,34 @@
 
             </el-col>
           </el-row>
-          
+
             <el-row v-loading="loadingItems" id="iSection">
+
+              <el-tooltip content="Something wrong ? Try to refresh." placement="top">
+                <el-button type="text" icon="el-icon-refresh" plain @click="Refresh()" style="float:left;margin-left:5%">Refresh</el-button>
+              </el-tooltip><br /><br />
+
               <el-col :xs="24" :span="12" id="pp-con">
 
               <el-card id="page-preview">
-                <el-row id="pre-top">
-                    <el-col :md="12">
-                        <h3 v-if="pageTitle">{{pageTitle}}</h3>
-                        <h5 style="font-weight:lighter" v-if="pageText">{{pageText}}</h5>
-                    </el-col>
-                    <el-col :md="12" id="pre-img">
-                        <div v-if="removeImage && !imageUploaded">
-                            <p>No image</p>
-                        </div>
-                        <div v-else>
-                            <img v-if="!imageUploaded" v-bind:src="pageImg" alt="" width="100%" />
-                            <img v-else v-bind:src="imageUploaded" alt="" width="100%" />
-                        </div>                      
-                    </el-col>
-                </el-row> 
+                  <el-tooltip class="" effect="dark" content="Edit step 1 and you'll see the changes here" placement="top">
+                  <el-row id="pre-top">
+                        <el-col :md="12">
+                            <h3 v-if="pageTitle">{{pageTitle}}</h3>
+                            <h5 style="font-weight:lighter" v-if="pageText">{{pageText}}</h5>
+                        </el-col>
+          
+                      <el-col :md="12" id="pre-img">
+                          <div v-if="removeImage && !imageUploaded">
+                              <p>No image</p>
+                          </div>
+                          <div v-else>
+                              <img v-if="!imageUploaded" v-bind:src="pageImg" alt="" width="100%" />
+                              <img v-else v-bind:src="imageUploaded" alt="" width="100%" />
+                          </div>                      
+                      </el-col>
+                  </el-row> 
+                </el-tooltip>
                 <br />
                 <layout :selectedID="selectedPreTemplateName" :templateID="preTemplateName" :preview="true" :data="0" :page="0"></layout>
 
@@ -266,6 +280,9 @@ import uploadimage from '@/components/backend/Uploadimage'
         }
     },
     methods: { 
+      Refresh () {
+        this.resetItems();
+      },
       RemoveImage () {
         this.removeImage = true;
       },
@@ -278,11 +295,12 @@ import uploadimage from '@/components/backend/Uploadimage'
           let self = this;
           setTimeout(function(){ 
             self.$store.commit('GetPageItems', self.$route.params.id);
-          }, 1500);
+            self.$store.commit('GetItems'); 
+          }, 2000);
           setTimeout(function(){ 
             self.itemOrder = self.$store.getters.GetISorted;
             self.loadingItems = false; 
-          }, 3000); 
+          }, 5000); 
       },
       rebuildItems () {      
           this.itemOrder = [];
@@ -315,10 +333,10 @@ import uploadimage from '@/components/backend/Uploadimage'
               message: name + ' saved'
             });
           self.loading = false;
-        }, 1500); 
+          self.$store.commit('SetUploadedImage', ""); 
+        }, 3000); 
       },
       GetT (template) {
-        console.log(template)
         this.selectedID = template.id;
         this.selectedPreTemplateName = template.name;
         $('.el-card').removeClass('selected01');
@@ -359,8 +377,7 @@ import uploadimage from '@/components/backend/Uploadimage'
             TemplateID: this.selectedID == "" ? this.templateID : this.selectedID
           }
           this.$store.dispatch('EditPage', obj);    
-          this.FetchPages(page.name);  
-                  
+          this.FetchPages(page.name);                  
         } else { 
           this.$message.error('The name has to be filled out.');
           return false;            
@@ -370,6 +387,7 @@ import uploadimage from '@/components/backend/Uploadimage'
         this.selectedItemID = item.id;
         this.$store.commit('SetEditDialog', true);
         this.$store.commit('SetDialogClose2', true); 
+        this.$store.commit('SetItemImage', ""); 
       },
       handleDelete(item) {
         this.$confirm('This will permanently delete ' + item.name + '. Continue?', 'Warning', {
@@ -378,11 +396,14 @@ import uploadimage from '@/components/backend/Uploadimage'
           type: 'warning'
         }).then(() => {
           this.$store.dispatch('DeleteItem', item.id);    
-          this.resetItems();     
-          this.$message({
-            type: 'success',
-            message: 'Delete completed'
-          });
+          this.resetItems();   
+          let self = this;  
+          setTimeout(function(){ 
+            self.$message({
+              type: 'success',
+              message: 'Delete completed'
+            });
+          }, 5000); 
         }).catch(() => {
           this.$message({
             type: 'info',
