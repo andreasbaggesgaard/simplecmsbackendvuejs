@@ -220,7 +220,7 @@ import itemdetail from '@/components/backend/items/Itemdetail'
 import uploadimage from '@/components/backend/Uploadimage'
 
 
-  export default {
+export default {
     data() {
       return {
         id: "",

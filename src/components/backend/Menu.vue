@@ -72,13 +72,13 @@ import forEach from 'lodash/foreach'
         }, 2000);    
     },
     computed: {
-      Pages: {
+      Pages: { 
         get() {
-            return this.$store.getters.GetAllPages;
-          },
-          set(val) {
-            this.$store.commit('SetPages', val)
-          }        
+          return this.$store.getters.GetAllPages;
+        },
+        set(val) {
+          this.$store.commit('SetPages', val)
+        }        
       }
     },
     methods: { 
@@ -118,6 +118,5 @@ import forEach from 'lodash/foreach'
 <style>
 .el-checkbox__label {
   display: inline-block !important;
-  
 }
 </style>

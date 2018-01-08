@@ -23,7 +23,10 @@
       <el-menu-item index="6" class="inactive">
         <template slot="title"><i class="el-icon-edit-outline"></i>Profile</template>
       </el-menu-item>
-       <el-menu-item index="7" @click="Logout()">
+      <el-menu-item index="7" @click="GoToWebsite()">
+        <template slot="title"><i class="el-icon-location-outline"></i>Go to website</template>
+      </el-menu-item>
+       <el-menu-item index="8" @click="Logout()">
         <template slot="title"><i class="el-icon-d-arrow-left"></i>Logout</template>
       </el-menu-item>
     </el-menu>
@@ -42,6 +45,9 @@
       }
     },
     methods: {
+      GoToWebsite () {
+        this.$router.push("/");
+      },
       Logout () {
         this.$store.dispatch('Logout');
         this.$notify.info({

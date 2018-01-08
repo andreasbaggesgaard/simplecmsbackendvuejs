@@ -80,8 +80,8 @@ import $ from "jquery";
            color: "#FFF",
            selectedTheme: "",
            themes: [
-             { title: "theme01", image: "src/assets/logo.png", id: "theme01"}, 
-             { title: "theme02", image: "src/assets/logo.png", id: "theme02"}
+             { title: "theme01", image: "http://andreasbaggesgaard.dk/logo.png", id: "theme01"}, 
+             { title: "theme02", image: "http://andreasbaggesgaard.dk/logo.png", id: "theme02"}
              ]
         } 
       },

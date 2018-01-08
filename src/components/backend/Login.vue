@@ -74,7 +74,7 @@
                     type: 'success'
                   });
                }
-            }, 1000);
+            }, 2000);
            
           } else { return false; }
         });

@@ -20,6 +20,9 @@
       title=""
       :visible.sync="help"
       width="70%">
+      <h3>Shortcuts:</h3>
+      <p @click="GoToWebsite()" id="gotowebsite">Go to the frontpage of your website</p>
+      <h3>Guides:</h3>
       <iframe width="560" height="315" src="https://www.youtube.com/embed/WwWucO2KXEY" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>                
       <span slot="footer" class="dialog-footer">
         <el-button @click="help = false">Close</el-button>           
@@ -30,7 +33,7 @@
        <el-button size="small" style="float:right; margin:2%;" @click="OpenHelp">Need help <i class="el-icon-question"></i></el-button>
       <el-col :md="24">
           <el-tabs type="card" v-bind:value="tabsValue" @tab-click="handleClick" style="padding-left:2%;padding-right:1%;">
-            <el-tab-pane name="Pages" label="Pages"><span slot="label"><i class="el-icon-document"></i> Pages </span>
+            <el-tab-pane name="Pages" label="Pages"><span slot="label" @click="RefreshPages()"><i class="el-icon-document"></i> Pages </span>
 
 <el-row :gutter="0" style="padding-top:3%">
   <div v-if="newPage">
@@ -76,7 +79,7 @@
 
           <el-form-item prop="image" label="Image"><br />
             <uploadimage original="" bool="true"></uploadimage>
-            <input type="text" v-bind:value="imageUploaded = UploadedImage" />
+            <input type="hidden" v-bind:value="imageUploaded = UploadedImage" />
           </el-form-item>
 
           <el-form-item>
@@ -218,8 +221,14 @@ import uploadimage from '@/components/backend/Uploadimage'
       },
     },
     methods: { 
+      GoToWebsite () {
+        this.$router.push("/");
+      },
       RefreshItems () {
         this.$store.commit('GetItems');
+      },
+      RefreshPages () {
+        this.$store.commit('GetPages');
       },
       tableRowClassName({row, rowIndex}) { 
         /*if (row.used == true) {
@@ -252,14 +261,25 @@ import uploadimage from '@/components/backend/Uploadimage'
         $(e.target).addClass('selected02');
         console.log(this.selectedID);
       },
-      FetchPages() {
+      FetchPages(name) {
         this.loading = true;
         let self = this; 
         setTimeout(function(){ 
-          self.$store.commit('GetPages');   
-          self.$store.getters.GetAllPages;
+          self.$store.commit('GetPages'); 
           self.loading = false;
-        }, 3000); 
+          self.$message({
+            type: 'success',
+            message: 'Page created: ' + name
+          });
+        }, 4000);
+      },
+      ReFetchPages() {
+        this.loading = true;
+        let self = this; 
+        setTimeout(function(){ 
+          self.$store.commit('GetPages'); 
+          self.loading = false;
+        }, 4000);
       },
       submitForm(formName) {     
           if(this.selectedID == "") {
@@ -281,11 +301,7 @@ import uploadimage from '@/components/backend/Uploadimage'
                 }
                 this.$store.dispatch('NewPage', obj);    
                 let self = this; 
-                this.FetchPages();            
-                this.$message({
-                  type: 'success',
-                  message: 'Page created: ' + obj.Name
-                });
+                this.FetchPages(obj.Name);            
                 $('html, body').animate({ scrollTop: 0 }, 'fast');
                 this.newPage = false;
                 this.selected = false;
@@ -311,11 +327,14 @@ import uploadimage from '@/components/backend/Uploadimage'
           type: 'warning'
         }).then(() => {
           this.$store.dispatch('DeletePage', row.id);    
-          this.FetchPages();       
-          this.$message({
-            type: 'success',
-            message: 'Delete completed'
-          });
+          this.ReFetchPages();    
+          let self = this; 
+          setTimeout(function(){ 
+            self.$message({
+              type: 'success',
+              message: 'Delete completed'
+            });
+          }, 4000);           
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -357,5 +376,11 @@ import uploadimage from '@/components/backend/Uploadimage'
   }
 .el-table__expanded-cell {
   text-align:left;
+}
+#gotowebsite {
+  text-decoration: underline;
+}
+#gotowebsite:hover {
+  cursor: pointer;
 }
 </style>
